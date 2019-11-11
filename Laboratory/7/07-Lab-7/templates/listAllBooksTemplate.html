@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>List All Books</title>
+</head>
+<body>
+<h1>List All Books:</h1>
+Number of books on the database: {{ number_of_books }}
+
+{% for bk in books %}
+    <ul>
+        <li>BOOK: {{bk}}
+        </li>
+    </ul>
+{% endfor %}
+</body>
+</html>
