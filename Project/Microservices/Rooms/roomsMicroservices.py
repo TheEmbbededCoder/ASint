@@ -17,11 +17,11 @@ def rooms():
 	# SHOW ALL ROOMS EX
 	return jsonify(result)
 
-@app.route('/rooms/<classroom>')
-def room_location(classroom):
+@app.route('/rooms/<id>')
+def room_location(id):
 	message = {}
 	try:
-		resp = requests.get("https://fenix.tecnico.ulisboa.pt/api/fenix/"+str(classroom)+"/spaces")
+		resp = requests.get("https://fenix.tecnico.ulisboa.pt/api/fenix/v1/spaces/"+str(id))
 
 		if resp.status_code != 200:
 			#This means something went wrong.
@@ -32,20 +32,12 @@ def room_location(classroom):
 			}
 		else:
 			pass_times = resp.json()
-			#jprint(resp.json())
-
-			campi = []
-			building = []
-			for d in pass_times:
-				campi.append(d['id'])
-				building.append(d['name'])
-
-			print(campi)
-			print(building)
-
+			jprint(pass_times['name'])
+			jprint(pass_times['topLevelSpace']['name'])
+			
 			room_local = {
-				'campi'      : campi,
-				'building'   : building
+				'campi'      : pass_times['topLevelSpace']['name'],
+				'building'   : pass_times['name']
 			}
 			message = {
 				'status_code': 200,
@@ -63,11 +55,11 @@ def room_location(classroom):
 	return jsonify(message)
 
 
-@app.route('/rooms/<classroom>/<id>/<day>/<mouth>/<year>')
-def rooms_timetable(classroom, id, day, mouth, year):
+@app.route('/rooms/<id>/<day>/<mouth>/<year>')
+def rooms_timetable(id, day, mouth, year):
 	message = {}
 	try:
-		resp = requests.get("https://fenix.tecnico.ulisboa.pt/api/fenix/"+str(classroom)+"/spaces/"+str(id)+"?day="+str(day)+"/"+str(mouth)+"/"+str(year))
+		resp = requests.get("https://fenix.tecnico.ulisboa.pt/api/fenix/v1/spaces/"+str(id)+"?day="+str(day)+"/"+str(mouth)+"/"+str(year))
 
 		if resp.status_code != 200:
 			#This means something went wrong.
