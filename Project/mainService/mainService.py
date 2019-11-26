@@ -34,26 +34,40 @@ app = Flask(__name__)
 @app.route('/secretariat')
 def secretariat_base():
 	response = API_secretariat_base()
-	print(response)	
 	secretariat = response['secretariats']
-
-	print(secretariat)
-	return render_template("secretariatTemplate.html", sc=len(secretariat))
+	if secretariat == None:
+		return render_template("serviceOfflineTemplate.html", service="Secretariat", type="available")
+	else:
+		return render_template("secretariatListTemplate.html", sc=len(secretariat), secretariat=secretariat)
 
 @app.route('/secretariat/<str>')
 def secretariat(str):
 	response = API_secretariat(str)
-	print(response)	
 	secretariat = response['secretariats']
+	if secretariat == None:
+		return render_template("serviceOfflineTemplate.html", service="Secretariat", type="found")
+	else:
+		return render_template("secretariatTemplate.html", s=secretariat)
 
-	print(secretariat)
-	return render_template("secretariatTemplate.html", sc=len(secretariat))
+@app.route('/secretariat/<str>/<attr>')
+def secretariat_attr(str, attr):
+	url = str + '/' + attr
+	response = API_secretariat(url)
+	secretariat = response['secretariats']
+	if secretariat == None:
+		return render_template("serviceOfflineTemplate.html", service="Secretariat", type="found")
+	else:
+		return render_template("secretariatAttrTemplate.html", attr=attr, value=secretariat)
+
+# ERROR resource not found page
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('serviceOfflineTemplate.html', type="found")
 
 ########## REST API ###########
 
 @app.route('/API/secretariat')
 def API_secretariat_base():
-	print("secretariat base")
 	message = {}
 	url = "http://127.0.0.1:41000/secretariat"
 
@@ -64,16 +78,14 @@ def API_secretariat_base():
 
 @app.route('/API/secretariat/<str>')
 def API_secretariat(str):
-	print("secretariat")
 	message = {}
-	url = "http://127.0.0.1:41000/secretariat" + str
+	url = "http://127.0.0.1:41000/secretariat/" + str
 	
 	message = API_microServices(url, "secretariats")
 	return message
 
 @app.route('/API/rooms')
 def API_rooms_base():
-	print("rooms base")
 	message = {}
 	url = "http://127.0.0.1:40000/rooms"
 
@@ -82,7 +94,6 @@ def API_rooms_base():
 
 @app.route('/API/rooms/<str>')
 def API_rooms(str):
-	print("rooms")
 	message = {}
 	url = "http://127.0.0.1:40000/rooms/" + str
 	
@@ -91,7 +102,6 @@ def API_rooms(str):
 
 @app.route('/API/canteen')
 def API_canteen_base():
-	print("canteen base")
 	message = {}
 	url = "http://127.0.0.1:42000/canteen"
 
@@ -100,7 +110,6 @@ def API_canteen_base():
 
 @app.route('/API/canteen/<str>')
 def API_canteen(str):
-	print("canteen")
 	message = {}
 	url = "http://127.0.0.1:42000/canteen/" + str
 
