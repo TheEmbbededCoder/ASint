@@ -14,11 +14,10 @@ def jprint(obj):
 
 @app.route('/rooms')
 def rooms():
-	print("HELLO")
 	message = {
 			'status_code': 200,
 			'message': 'OK',
-			'room': "Service is up"
+			'rooms': "Service is up"
 			}
 	return jsonify(message)
 
@@ -33,7 +32,7 @@ def room_location(id):
 			message = {
 				'status_code': 404,
 				'message': 'Resource not found',
-				'room': None
+				'rooms': None
 			}
 		else:
 			pass_times = resp.json()
@@ -53,7 +52,7 @@ def room_location(id):
 		message = {
 			'status_code': 404,
 			'message': 'Unable to perform API resquest to Fenix',
-			'room': None
+			'rooms': None
 		}
 
 
