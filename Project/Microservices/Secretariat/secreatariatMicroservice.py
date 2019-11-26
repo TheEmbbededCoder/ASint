@@ -14,38 +14,53 @@ for secretariat in db.listAllSecretariats():
 
 @app.route('/secretariat')
 def API_showAll():
-	secr = db.listAllSecretariats()
 	message = {}
-	if secr == None:
+	secretariats = db.listAllSecretariats()
+	if secretariats == None:
 		message = {
 		'status_code': 404,
-		'message': 'No resource found',
+		'message': 'No secretariat found',
 		'secretariats': None
 		}
 	else:
+		secr_list = []
+		for secr in secretariats:
+			secretariat = {
+				'Name' : secr.Name,
+				'Location' : secr.Location,
+				'Description' : secr.Description,
+				'OpeningHours' : secr.OpeningHours
+			}
+			secr_list.append(secretariat)
+
 		message = {
-		'status_code': 200,
-		'message': 'OK',
-		'secretariats': secr
-		}
+			'status_code': 200,
+			'message': 'OK',
+			'secretariats': secr_list
+			}
 	return jsonify(message)
 
 @app.route('/secretariat/<name>')
 def API_show(name):
 	secr = db.showSecretariat(name)
-	message = {}
 	if secr == None:
 		message = {
-		'status_code': 404,
-		'message': 'No resource found',
-		'secretariats': None
-		}
+			'status_code': 404,
+			'message': 'No secretariat found',
+			'secretariats': None
+			}
 	else:
-		message = {
-		'status_code': 200,
-		'message': 'OK',
-		'secretariats': secr
+		secretariat = {
+			'Name' : secr.Name,
+			'Location' : secr.Location,
+			'Description' : secr.Description,
+			'OpeningHours' : secr.OpeningHours
 		}
+		message = {
+			'status_code': 200,
+			'message': 'OK',
+			'secretariats': secretariat
+			}
 	return jsonify(message)
 
 @app.route('/secretariat/<name>/location')
@@ -55,7 +70,7 @@ def API_getLocation(name):
 	if secr == None:
 		message = {
 		'status_code': 404,
-		'message': 'No resource found',
+		'message': 'No secretariat found',
 		'secretariats': None
 		}
 	else:
@@ -68,12 +83,32 @@ def API_getLocation(name):
 
 @app.route('/secretariat/<name>/description')
 def API_getDescription(name):
+	print("description")
 	secr = db.getDescription(name)
+	print(secr)
+	message = {}
+	if secr == None:
+		message = {
+			'status_code': 404,
+			'message': 'No secretariat found',
+			'secretariats': None
+			}
+	else:
+		message = {
+			'status_code': 200,
+			'message': 'OK',
+			'secretariats': secr
+			}
+	return jsonify(message)
+
+@app.route('/secretariat/<name>/openhours')
+def API_getOpenhours(name):
+	secr = db.getOpenhours(name)
 	message = {}
 	if secr == None:
 		message = {
 		'status_code': 404,
-		'message': 'No resource found',
+		'message': 'No secretariat found',
 		'secretariats': None
 		}
 	else:
@@ -84,22 +119,29 @@ def API_getDescription(name):
 		}
 	return jsonify(message)
 
-@app.route('/secretariat/<name>/openhours')
-def API_getOpenhours(name):
-	secr = db.getOpenhours(name)
-	message = {}
+@app.route('/secretariat/add/<Location>/<Name>/<Description>/<OpeningHours>')
+def API_add(Location, Name, Description, OpeningHours):
+	print("Add")
+	db.addSecretariat(Location, Name, Description, OpeningHours)
+	secr = db.showSecretariat(Name)
 	if secr == None:
 		message = {
-		'status_code': 404,
-		'message': 'No resource found',
-		'secretariats': None
-		}
+			'status_code': 404,
+			'message': 'No secretariat added',
+			'secretariats': None
+			}
 	else:
-		message = {
-		'status_code': 200,
-		'message': 'OK',
-		'secretariats': secr
+		secretariat = {
+			'Name' : secr.Name,
+			'Location' : secr.Location,
+			'Description' : secr.Description,
+			'OpeningHours' : secr.OpeningHours
 		}
+		message = {
+			'status_code': 200,
+			'message': 'secretariat added',
+			'secretariats': secretariat
+			}
 	return jsonify(message)
 
 if __name__ == '__main__':

@@ -40,6 +40,15 @@ def secretariat_base():
 	print(secretariat)
 	return render_template("secretariatTemplate.html", sc=len(secretariat))
 
+@app.route('/secretariat/<str>')
+def secretariat(str):
+	response = API_secretariat(str)
+	print(response)	
+	secretariat = response['secretariats']
+
+	print(secretariat)
+	return render_template("secretariatTemplate.html", sc=len(secretariat))
+
 ########## REST API ###########
 
 @app.route('/API/secretariat')

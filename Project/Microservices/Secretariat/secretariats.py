@@ -6,5 +6,5 @@ class secretariats:
         self.OpeningHours = OpeningHours
 
     def __str__(self):
-        return "%d - %s - %s - %s" % (self.Location, self.Name, self.Description, self.OpeningHours)
+        return "%s - %s - %s - %s" % (self.Location, self.Name, self.Description, self.OpeningHours)
 

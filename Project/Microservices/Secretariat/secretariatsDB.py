@@ -10,6 +10,7 @@ class secretariatsDB:
 			f.close()
 		except IOError:
 			self.sDB = {}
+
 	def addSecretariat(self, Location, Name, Description, OpeningHours):
 		self.sDB[Name] = secretariats.secretariats(Location, Name, Description, OpeningHours)
 		f = open('secretariatsDB'+self.name, 'wb')
@@ -36,14 +37,14 @@ class secretariatsDB:
 	def getDescription(self, Name):
 		try:
 			secr = self.sDB[Name]
-			return secr.description
+			return secr.Description
 		except:
 			pass
 
 	def getOpenhours(self, Name):
 		try:
 			secr = self.sDB[Name]
-			return secr.openhours
+			return secr.OpeningHours
 		except:
 			pass
 
