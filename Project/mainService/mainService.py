@@ -26,7 +26,7 @@ def API_microServices(url, microS):
 		'message': 'Unable to perform API request to ' + str(microS) + ' microservice.',
 		str(microS): None
 		}
-	return jsonify(message)
+	return message
 
 app = Flask(__name__)
 
@@ -34,10 +34,11 @@ app = Flask(__name__)
 @app.route('/secretariat')
 def secretariat_base():
 	response = API_secretariat_base()
-	print(response)
-	#secretariat = response.status_code
-	#print(secretariat)
-	#return render_template("secretariatTemplate.html")
+	print(response)	
+	secretariat = response['secretariats']
+
+	print(secretariat)
+	return render_template("secretariatTemplate.html", sc=len(secretariat))
 
 ########## REST API ###########
 
@@ -48,7 +49,9 @@ def API_secretariat_base():
 	url = "http://127.0.0.1:41000/secretariat"
 
 	message = API_microServices(url, "secretariats")
+
 	return message
+	#return jsonify(message)
 
 @app.route('/API/secretariat/<str>')
 def API_secretariat(str):
