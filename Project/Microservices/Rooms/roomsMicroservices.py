@@ -16,7 +16,7 @@ def jprint(obj):
 def rooms():
 	print("HELLO")
 	message = {
-			'status': 200,
+			'status_code': 200,
 			'message': 'OK',
 			'room': "Service is up"
 			}

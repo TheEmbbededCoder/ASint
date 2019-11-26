@@ -3,12 +3,22 @@ from flask import render_template
 from flask import request, url_for, redirect
 from flask import jsonify
 import requests
+import json
 
 app = Flask(__name__)
 
+############ HTML #############
+@app.route('/secretariat')
+def secretariat_base():
+	response = API_secretariat_base()
+	print(response)
+	#secretariat = response.status_code
+	#print(secretariat)
+	return render_template("secretariatTemplate.html")
+
 ########## REST API ###########
 
-@app.route('/secretariat')
+@app.route('/API/secretariat')
 def API_secretariat_base():
 	print("secretariat base")
 	message = {}
@@ -18,25 +28,25 @@ def API_secretariat_base():
 		resp = requests.get(url)
 		if resp.status_code != 200:
 			message = {
-			'status': 404,
+			'status_code': 404,
 			'message': 'No resource found',
 			'secretariats': None
 			}
 		else:
 			message = {
-			'status': 200,
+			'status_code': 200,
 			'message': 'OK',
 			'secretariats': resp.json()['secretariats']
 			}
 	except:
 		message = {
-		'status': 404,
+		'status_code': 404,
 		'message': 'Unable to perform API request to secretariats microservice',
 		'secretariats': None
 		}
 	return jsonify(message)
 
-@app.route('/secretariat/<str>')
+@app.route('/API/secretariat/<str>')
 def API_secretariat(str):
 	print("secretariat")
 	message = {}
@@ -64,7 +74,7 @@ def API_secretariat(str):
 		}
 	return jsonify(message)
 
-@app.route('/rooms')
+@app.route('/API/rooms')
 def API_rooms_base():
 	print("rooms base")
 	message = {}
@@ -93,7 +103,7 @@ def API_rooms_base():
 	return jsonify(message)
 
 
-@app.route('/rooms/<str>')
+@app.route('/API/rooms/<str>')
 def API_rooms(str):
 	print("rooms")
 	message = {}
@@ -121,7 +131,7 @@ def API_rooms(str):
 		}
 	return jsonify(message)
 
-@app.route('/canteen')
+@app.route('/API/canteen')
 def API_canteen_base():
 	print("canteen base")
 	message = {}
@@ -149,7 +159,7 @@ def API_canteen_base():
 		}
 	return jsonify(message)
 
-@app.route('/canteen/<str>')
+@app.route('/API/canteen/<str>')
 def API_canteen(str):
 	print("canteen")
 	message = {}

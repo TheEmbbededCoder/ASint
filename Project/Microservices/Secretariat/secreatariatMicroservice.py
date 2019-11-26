@@ -18,13 +18,13 @@ def API_showAll():
 	message = {}
 	if secr == None:
 		message = {
-		'status': 404,
+		'status_code': 404,
 		'message': 'No resource found',
 		'secretariats': None
 		}
 	else:
 		message = {
-		'status': 200,
+		'status_code': 200,
 		'message': 'OK',
 		'secretariats': secr
 		}
@@ -36,13 +36,13 @@ def API_show(name):
 	message = {}
 	if secr == None:
 		message = {
-		'status': 404,
+		'status_code': 404,
 		'message': 'No resource found',
 		'secretariats': None
 		}
 	else:
 		message = {
-		'status': 200,
+		'status_code': 200,
 		'message': 'OK',
 		'secretariats': secr
 		}
@@ -54,13 +54,13 @@ def API_getLocation(name):
 	message = {}
 	if secr == None:
 		message = {
-		'status': 404,
+		'status_code': 404,
 		'message': 'No resource found',
 		'secretariats': None
 		}
 	else:
 		message = {
-		'status': 200,
+		'status_code': 200,
 		'message': 'OK',
 		'secretariats': secr
 		}
@@ -72,13 +72,13 @@ def API_getDescription(name):
 	message = {}
 	if secr == None:
 		message = {
-		'status': 404,
+		'status_code': 404,
 		'message': 'No resource found',
 		'secretariats': None
 		}
 	else:
 		message = {
-		'status': 200,
+		'status_code': 200,
 		'message': 'OK',
 		'secretariats': secr
 		}
@@ -90,13 +90,13 @@ def API_getOpenhours(name):
 	message = {}
 	if secr == None:
 		message = {
-		'status': 404,
+		'status_code': 404,
 		'message': 'No resource found',
 		'secretariats': None
 		}
 	else:
 		message = {
-		'status': 200,
+		'status_code': 200,
 		'message': 'OK',
 		'secretariats': secr
 		}
