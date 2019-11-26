@@ -13,10 +13,8 @@ app = Flask(__name__)
 @app.route('/canteen')
 def API_showAll():
 	# Show all canteens
-	print('API_showCanteen')
 	resp = requests.get('https://fenix.tecnico.ulisboa.pt/api/fenix/v1/canteen')
 	canteen = resp.json()
-	print(canteen)
 	if canteen == None:
 		message = {
 		'status_code': 404,
@@ -33,7 +31,6 @@ def API_showAll():
 
 @app.route('/canteen/<date>')
 def API_showCanteen(date):
-	print(date)
 	date = date[0:2] + '/' + date[2:4] + '/' + date[4:8]
 	
 	resp = requests.get('https://fenix.tecnico.ulisboa.pt/api/fenix/v1/canteen')
@@ -65,4 +62,4 @@ def API_showCanteen(date):
 
 
 if __name__ == '__main__':
-	app.run(debug=True)
+	app.run(debug=True, port=42000)

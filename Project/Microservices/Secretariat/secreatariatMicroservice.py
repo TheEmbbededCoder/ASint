@@ -103,4 +103,4 @@ def API_getOpenhours(name):
 	return jsonify(message)
 
 if __name__ == '__main__':
-	app.run()
+	app.run(debug=True, port=41000)

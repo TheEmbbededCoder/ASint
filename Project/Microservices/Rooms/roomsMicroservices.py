@@ -14,8 +14,13 @@ def jprint(obj):
 
 @app.route('/rooms')
 def rooms():
-	# SHOW ALL ROOMS EX
-	return jsonify(result)
+	print("HELLO")
+	message = {
+			'status': 200,
+			'message': 'OK',
+			'room': "Service is up"
+			}
+	return jsonify(message)
 
 @app.route('/rooms/<id>')
 def room_location(id):
@@ -101,5 +106,5 @@ def rooms_timetable(id, day, mouth, year):
 	return jsonify(message)
 
 if __name__ == '__main__':
-	app.run()
+	app.run(debug=True, port=40000)
  
