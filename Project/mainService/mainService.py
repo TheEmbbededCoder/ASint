@@ -22,9 +22,9 @@ def API_microServices(url, microS):
 			}
 	except:
 		message = {
-		'status_code': 404,
-		'message': 'Unable to perform API request to ' + str(microS) + ' microservice.',
-		str(microS): None
+			'status_code': 404,
+			'message': 'Unable to perform API request to ' + str(microS) + ' microservice.',
+			str(microS): None
 		}
 	return message
 
@@ -84,6 +84,14 @@ def rooms(str):
 
 #CANTEEN
 
+@app.route('/canteen')
+def canteen():
+	response = API_canteen_base()
+	if response["canteen"] == None:
+		return render_template("serviceOfflineTemplate.html", service="Canteen", type="found")
+	else:
+		return render_template("canteenListTemplate.html", canteen = response["canteen"])
+
 
 # ERROR resource not found page
 @app.errorhandler(404)
@@ -135,11 +143,11 @@ def API_canteen_base():
 	message = API_microServices(url, "canteen")
 	return message
 
-@app.route('/API/canteen/<str>')
-def API_canteen(str):
+@app.route('/API/canteen/<day>/<month>/<year>')
+def API_canteen(day, month, year):
 	message = {}
-	url = "http://127.0.0.1:42000/canteen/" + str
-
+	url = "http://127.0.0.1:42000/canteen/" + day + "/" + month + "/" + year
+	print(url)
 	message = API_microServices(url, "canteen")
 	return message
 

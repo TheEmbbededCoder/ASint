@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Canteen</title>
+</head>
+<body>
+
+<h1>Canteen</h1>
+
+{% for s in canteen %}
+	<ul>
+        <li>{{s['day']}}
+            <ul>
+                <li>Almoço: 
+                    <ul>
+                        {% for m in s['meal'][0]['info'] %}
+                        <li>
+                            <b>{{m['menu']}} {{m['type']}}: </b>{{m['name']}} 
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </li>
+                <li>Jantar: 
+                    <ul>
+                        {% for m in s['meal'][1]['info'] %}
+                        <li>
+                            <b>{{m['menu']}} {{m['type']}}: </b>{{m['name']}} 
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </li>
+            </ul>
+        </li>
+    </ul>
+{% endfor %}
+
+</body>
+</html>

@@ -29,9 +29,9 @@ def API_showAll():
 		}
 	return jsonify(message)
 
-@app.route('/canteen/<date>')
-def API_showCanteen(date):
-	date = date[0:2] + '/' + date[2:4] + '/' + date[4:8]
+@app.route('/canteen/<day>/<month>/<year>')
+def API_showCanteen(day, month, year):
+	date = day + '/' + month + '/' + year
 	
 	resp = requests.get('https://fenix.tecnico.ulisboa.pt/api/fenix/v1/canteen')
 	if resp.status_code != 200:
@@ -49,13 +49,13 @@ def API_showCanteen(date):
 		message = {
 		'status_code': 404,
 		'message': 'No resource found',
-		'meal': None
+		'canteen': None
 		}
 	else:
 		message = {
 		'status_code': 200,
 		'message': 'OK',
-		'meal': output
+		'canteen': output
 		}
 	return message
 	
