@@ -85,13 +85,20 @@ def rooms(str):
 #CANTEEN
 
 @app.route('/canteen')
-def canteen():
+def canteen_base():
 	response = API_canteen_base()
 	if response["canteen"] == None:
 		return render_template("serviceOfflineTemplate.html", service="Canteen", type="found")
 	else:
 		return render_template("canteenListTemplate.html", canteen = response["canteen"])
 
+@app.route('/canteen/<day>/<month>/<year>')
+def canteen(day, month, year):
+	response = API_canteen(day, month, year)
+	if response["canteen"] == None:
+		return render_template("serviceOfflineTemplate.html", service="Canteen", type="found")
+	else:
+		return render_template("canteenDayTemplate.html", canteen = response["canteen"])
 
 # ERROR resource not found page
 @app.errorhandler(404)
