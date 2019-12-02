@@ -31,6 +31,8 @@ def API_microServices(url, microS):
 app = Flask(__name__)
 
 ############ HTML #############
+
+# SECRETARIAT
 @app.route('/secretariat')
 def secretariat_base():
 	response = API_secretariat_base()
@@ -59,13 +61,37 @@ def secretariat_attr(str, attr):
 	else:
 		return render_template("secretariatAttrTemplate.html", attr=attr, value=secretariat)
 
+# ROOMS
+@app.route('/rooms')
+def rooms_base():
+	response = API_rooms_base()
+	if response['message'] == 'OK':
+		return render_template("roomsListTemplate.html")
+	else:
+		return render_template("roomsOfflineTemplate.html", service="Room", type="available")
+
+
+@app.route('/rooms/<str>')
+def rooms(str):
+	response = API_rooms(str)
+	campi=response['rooms']['campi']
+	building=response['rooms']['building']
+	
+	if response['message'] == 'OK':
+		return render_template("roomsInformation.html", campi=campi, building=building, id=str)
+	else:
+		return render_template("roomsOfflineTemplate.html", service="Room", type="available")
+
+#CANTEEN
+
+
 # ERROR resource not found page
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('serviceOfflineTemplate.html', type="found")
 
 ########## REST API ###########
-
+# ------------------------------#
 @app.route('/API/secretariat')
 def API_secretariat_base():
 	message = {}
@@ -74,7 +100,6 @@ def API_secretariat_base():
 	message = API_microServices(url, "secretariats")
 
 	return message
-	#return jsonify(message)
 
 @app.route('/API/secretariat/<str>')
 def API_secretariat(str):
@@ -84,6 +109,7 @@ def API_secretariat(str):
 	message = API_microServices(url, "secretariats")
 	return message
 
+# ------------------------------#
 @app.route('/API/rooms')
 def API_rooms_base():
 	message = {}
@@ -99,7 +125,8 @@ def API_rooms(str):
 	
 	message = API_microServices(url, "rooms")
 	return message
-
+	
+# ------------------------------#
 @app.route('/API/canteen')
 def API_canteen_base():
 	message = {}
