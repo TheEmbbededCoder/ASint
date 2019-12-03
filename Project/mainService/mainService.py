@@ -15,11 +15,18 @@ def API_microServices(url, microS):
 			str(microS): None
 			}
 		else:
-			message = {
-			'status_code': 200,
-			'message': 'OK',
-			str(microS): resp.json()[microS]
-			}
+			if(resp.json()[microS] != None):
+				message = {
+				'status_code': 200,
+				'message': 'OK',
+				str(microS): resp.json()[microS]
+				}
+			else:
+				message = {
+				'status_code': 200,
+				'message': 'Resource not found at microservice',
+				str(microS): None
+				}
 	except:
 		message = {
 			'status_code': 404,
@@ -42,24 +49,20 @@ def secretariat_base():
 	else:
 		return render_template("secretariatListTemplate.html", sc=len(secretariat), secretariat=secretariat)
 
-@app.route('/secretariat/<str>')
-def secretariat(str):
-	response = API_secretariat(str)
+@app.route('/secretariat/<path:subpath>')
+def secretariat(subpath):
+	response = API_secretariat(subpath)
 	secretariat = response['secretariats']
 	if secretariat == None:
 		return render_template("serviceOfflineTemplate.html", service="Secretariat", type="found")
 	else:
-		return render_template("secretariatTemplate.html", s=secretariat)
-
-@app.route('/secretariat/<str>/<attr>')
-def secretariat_attr(str, attr):
-	url = str + '/' + attr
-	response = API_secretariat(url)
-	secretariat = response['secretariats']
-	if secretariat == None:
-		return render_template("serviceOfflineTemplate.html", service="Secretariat", type="found")
-	else:
-		return render_template("secretariatAttrTemplate.html", attr=attr, value=secretariat)
+		if('/' not in subpath):
+			return render_template("secretariatTemplate.html", s=secretariat)
+		else:
+			attr = subpath.split('/')
+			attr.pop(0)
+			attr = '/'.join(attr)
+			return render_template("secretariatAttrTemplate.html", attr=attr, value=secretariat)
 
 # ROOMS
 @app.route('/rooms')
@@ -150,10 +153,10 @@ def API_canteen_base():
 	message = API_microServices(url, "canteen")
 	return message
 
-@app.route('/API/canteen/<day>/<month>/<year>')
-def API_canteen(day, month, year):
+@app.route('/API/canteen/<path:subpath>')
+def API_canteen(subpath):
 	message = {}
-	url = "http://127.0.0.1:42000/canteen/" + day + "/" + month + "/" + year
+	url = "http://127.0.0.1:42000/canteen/" + subpath
 	print(url)
 	message = API_microServices(url, "canteen")
 	return message

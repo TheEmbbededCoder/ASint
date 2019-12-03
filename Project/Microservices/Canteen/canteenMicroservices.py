@@ -32,7 +32,7 @@ def API_showAll():
 @app.route('/canteen/<day>/<month>/<year>')
 def API_showCanteen(day, month, year):
 	date = day + '/' + month + '/' + year
-	
+	print(date)
 	resp = requests.get('https://fenix.tecnico.ulisboa.pt/api/fenix/v1/canteen')
 	if resp.status_code != 200:
 	    # This means something went wrong.
