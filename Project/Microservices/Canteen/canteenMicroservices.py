@@ -24,7 +24,7 @@ def API_showAll():
 	else:
 		message = {
 		'status_code': 200,
-		'message': 'OK',
+		'message': 'Canteen in up',
 		'canteen': canteen
 		}
 	return jsonify(message)

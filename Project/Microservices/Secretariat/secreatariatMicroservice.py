@@ -20,7 +20,7 @@ def API_showAll():
 		message = {
 		'status_code': 404,
 		'message': 'No secretariat found',
-		'secretariats': None
+		'secretariat': None
 		}
 	else:
 		secr_list = []
@@ -35,8 +35,8 @@ def API_showAll():
 
 		message = {
 			'status_code': 200,
-			'message': 'OK',
-			'secretariats': secr_list
+			'message': 'Secretariat is up',
+			'secretariat': secr_list
 			}
 	return jsonify(message)
 
@@ -47,7 +47,7 @@ def API_show(name):
 		message = {
 			'status_code': 404,
 			'message': 'No secretariat found',
-			'secretariats': None
+			'secretariat': None
 			}
 	else:
 		secretariat = {
@@ -59,7 +59,7 @@ def API_show(name):
 		message = {
 			'status_code': 200,
 			'message': 'OK',
-			'secretariats': secretariat
+			'secretariat': secretariat
 			}
 	return jsonify(message)
 
@@ -71,13 +71,13 @@ def API_getLocation(name):
 		message = {
 		'status_code': 404,
 		'message': 'No secretariat found',
-		'secretariats': None
+		'secretariat': None
 		}
 	else:
 		message = {
 		'status_code': 200,
 		'message': 'OK',
-		'secretariats': secr
+		'secretariat': secr
 		}
 	return jsonify(message)
 
@@ -91,13 +91,13 @@ def API_getDescription(name):
 		message = {
 			'status_code': 404,
 			'message': 'No secretariat found',
-			'secretariats': None
+			'secretariat': None
 			}
 	else:
 		message = {
 			'status_code': 200,
 			'message': 'OK',
-			'secretariats': secr
+			'secretariat': secr
 			}
 	return jsonify(message)
 
@@ -109,13 +109,13 @@ def API_getOpenhours(name):
 		message = {
 		'status_code': 404,
 		'message': 'No secretariat found',
-		'secretariats': None
+		'secretariat': None
 		}
 	else:
 		message = {
 		'status_code': 200,
 		'message': 'OK',
-		'secretariats': secr
+		'secretariat': secr
 		}
 	return jsonify(message)
 
@@ -128,7 +128,7 @@ def API_add(Location, Name, Description, OpeningHours):
 		message = {
 			'status_code': 404,
 			'message': 'No secretariat added',
-			'secretariats': None
+			'secretariat': None
 			}
 	else:
 		secretariat = {
@@ -140,7 +140,7 @@ def API_add(Location, Name, Description, OpeningHours):
 		message = {
 			'status_code': 200,
 			'message': 'secretariat added',
-			'secretariats': secretariat
+			'secretariat': secretariat
 			}
 	return jsonify(message)
 

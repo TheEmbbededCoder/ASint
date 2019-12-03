@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{microservice}}</title>
+</head>
+<body>
+
+<h1>{{microservice}}</h1>
+{% for h1 in json %}
+	<h2>{{h1}}</h2>
+	{% for h2 in h1 %}
+		<h3>{{h2}}: {{json['{{h2}}']}}</h3>
+	{% endfor %}
+{% endfor %}
+
+
+</body>
+</html>

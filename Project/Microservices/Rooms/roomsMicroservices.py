@@ -17,7 +17,7 @@ def rooms():
 	message = {
 			'status_code': 200,
 			'message': 'OK',
-			'rooms': "Service is up"
+			'rooms': "Rooms is up"
 			}
 	return jsonify(message)
 
@@ -46,7 +46,7 @@ def room_location(id):
 			message = {
 				'status_code': 200,
 				'message'    : 'OK',
-				'room_local' : room_local
+				'rooms' : room_local
 			}		
 	except:
 		message = {
@@ -70,7 +70,7 @@ def rooms_timetable(id, day, mouth, year):
 			message = {
 				'status_code': 404,
 				'message': 'Resource not found',
-				'room': None
+				'rooms': None
 			}
 		else:
 			# All events of that week
@@ -93,13 +93,13 @@ def rooms_timetable(id, day, mouth, year):
 			message = {
 				'status_code': 200,
 				'message': 'OK',
-				'room': room_timetable
+				'rooms': room_timetable
 			}
 	except :
 		message = {
 			'status_code': 404,
 			'message': 'Unable to perform API resquest to Fenix',
-			'room': None
+			'rooms': None
 		}
 	
 	return jsonify(message)
