@@ -16,7 +16,7 @@ def jprint(obj):
 def rooms():
 	message = {
 			'status_code': 200,
-			'message': 'OK',
+			'message': 'Rooms is up',
 			'rooms': "Rooms is up"
 			}
 	return jsonify(message)

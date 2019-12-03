@@ -77,13 +77,12 @@ def API_getLocation(name):
 		message = {
 		'status_code': 200,
 		'message': 'OK',
-		'secretariat': secr
+		'secretariat': {'location' : secr}
 		}
 	return jsonify(message)
 
 @app.route('/secretariat/<name>/description')
 def API_getDescription(name):
-	print("description")
 	secr = db.getDescription(name)
 	print(secr)
 	message = {}
@@ -97,7 +96,7 @@ def API_getDescription(name):
 		message = {
 			'status_code': 200,
 			'message': 'OK',
-			'secretariat': secr
+			'secretariat': {'description' : secr}
 			}
 	return jsonify(message)
 
@@ -115,7 +114,7 @@ def API_getOpenhours(name):
 		message = {
 		'status_code': 200,
 		'message': 'OK',
-		'secretariat': secr
+		'secretariat': {'openhours' : secr}
 		}
 	return jsonify(message)
 

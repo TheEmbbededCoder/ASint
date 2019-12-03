@@ -102,10 +102,10 @@ app = Flask(__name__)
 # 	else:
 # 		return render_template("canteenDayTemplate.html", canteen = response["canteen"])
 
-# # ERROR resource not found page
-# @app.errorhandler(404)
-# def page_not_found(e):
-#     return render_template('serviceOfflineTemplate.html', type="found")
+# ERROR resource not found page
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('serviceOfflineTemplate.html', type="found")
 
 # ########## REST API ###########
 # # ------------------------------#
@@ -166,22 +166,28 @@ microservices = {
 	'secretariat' : "http://127.0.0.1:41000/"
 }
 
+@app.route('/favicon.ico')
+def favicon():
+    return redirect(url_for('static', filename='favicon.ico'), code=302)
+
 @app.route('/<path:subpath>')
 def html(subpath):
 	microS = subpath.split('/')[0]
+	template = microS + "Template.html"
 	response = API(subpath)
 	json = response[microS]
 	print(json)
 	if json == None:
 		return render_template("serviceOfflineTemplate.html", service="Secretariat", type="found")
 	else:
-		return render_template("jsonTemplate.html", microservice=microS, json=json)
+		return render_template(template, microservice=microS, json=json)
 
 
 @app.route('/API/<path:subpath>')
 def API(subpath):
 	microS = subpath.split('/')[0]
 	url = microservices[microS] + subpath
+
 	message = API_microServices(url, microS)
 	return message
 
