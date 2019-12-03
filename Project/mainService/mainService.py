@@ -86,7 +86,6 @@ def rooms(str):
 		return render_template("roomsOfflineTemplate.html", service="Room", type="available")
 
 #CANTEEN
-
 @app.route('/canteen')
 def canteen_base():
 	response = API_canteen_base()
@@ -95,9 +94,9 @@ def canteen_base():
 	else:
 		return render_template("canteenListTemplate.html", canteen = response["canteen"])
 
-@app.route('/canteen/<day>/<month>/<year>')
-def canteen(day, month, year):
-	response = API_canteen(day, month, year)
+@app.route('/canteen/<path:subpath>')
+def canteen(subpath):
+	response = API_canteen(subpath)
 	if response["canteen"] == None:
 		return render_template("serviceOfflineTemplate.html", service="Canteen", type="found")
 	else:
@@ -136,10 +135,10 @@ def API_rooms_base():
 	message = API_microServices(url, "rooms")
 	return message
 
-@app.route('/API/rooms/<str>')
-def API_rooms(str):
+@app.route('/API/rooms/<path:subpath>')
+def API_rooms(subpath):
 	message = {}
-	url = "http://127.0.0.1:40000/rooms/" + str
+	url = "http://127.0.0.1:40000/rooms/" + subpath
 	
 	message = API_microServices(url, "rooms")
 	return message
