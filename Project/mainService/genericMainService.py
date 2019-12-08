@@ -166,6 +166,10 @@ microservices = {
 	'secretariat' : "http://127.0.0.1:41000/"
 }
 
+@app.route('/')
+def homePage():
+	return render_template("mainPage.html", services = microservices)
+
 @app.route('/favicon.ico')
 def favicon():
     return redirect(url_for('static', filename='favicon.ico'), code=302)
@@ -173,10 +177,11 @@ def favicon():
 @app.route('/<path:subpath>')
 def html(subpath):
 	microS = subpath.split('/')[0]
+	print(subpath.split('/'))
 	template = microS + "Template.html"
 	response = API(subpath)
 	json = response[microS]
-	print(json)
+	print(response)
 	if json == None:
 		return render_template("serviceOfflineTemplate.html", service="Secretariat", type="found")
 	else:

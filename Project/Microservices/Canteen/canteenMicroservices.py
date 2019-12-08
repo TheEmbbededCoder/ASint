@@ -42,7 +42,9 @@ def API_showCanteen(day, month, year):
 	
 	canteen = resp.json()
 	output = None
+	print(canteen)
 	for d in canteen:
+		print(d['day'])
 		if d['day'] == date:
 			output = d
 	if output == None:
@@ -57,6 +59,7 @@ def API_showCanteen(day, month, year):
 		'message': 'OK',
 		'canteen': output
 		}
+	print(message)
 	return message
 	
 
