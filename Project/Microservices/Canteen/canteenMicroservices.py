@@ -46,7 +46,7 @@ def API_showCanteen(day, month, year):
 	for d in canteen:
 		print(d['day'])
 		if d['day'] == date:
-			output = d
+			output = d['meal']
 	if output == None:
 		message = {
 		'status_code': 404,
