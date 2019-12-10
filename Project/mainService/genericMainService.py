@@ -13,6 +13,11 @@ fenixacesstokenpage = 'https://fenix.tecnico.ulisboa.pt/oauth/access_token'
 users = {}
 key = 0
 
+admin_data = {
+				'user' : "admin",
+				'password' : "admin"
+			}
+
 microservices = {
 	'canteen' : "http://127.0.0.1:42000/",
 	'rooms' : "http://127.0.0.1:40000/",
@@ -67,6 +72,28 @@ def favicon():
 def homePage():
 	return render_template("mainPage.html", services = microservices)
 
+### ADMIN
+@app.route('/admin')
+def admin():
+	return render_template("adminTemplateLogin.html", error = False)
+
+@app.route('/adminLogin', methods=['POST'])
+def adminLogin():
+	if request.method == "POST":
+		admin_user = request.form["uname"]
+		admin_pass = request.form["psw"]
+
+		# User is authenticated
+		if(admin_user == admin_data['user'] and admin_pass == admin_data['password']):
+			# Mostrar pagina de administração
+			return render_template("adminTemplate.html")
+		
+
+	return render_template("adminTemplateLogin.html", error = True)
+
+###########
+
+### Login User
 
 @app.route('/login', methods=['GET'])
 def login():
@@ -130,6 +157,10 @@ def userAuthenticated():
 		print("Not able to authenticate")
 
 	return redirect('/login')
+
+#######
+
+### Microservices
 
 @app.route('/<path:subpath>')
 def html(subpath):
