@@ -68,16 +68,26 @@
         {{ text[0]|upper}}{{text[1:] }}
     {% endmacro %}
     <div class="topnav">
-      <a class="active" href="/">Home</a>
+      <a class="active" href="/?key={{key}}">Home</a>
       {% for s in services %} 
-        <a href="/{{s}}">{{ sentence_case(s) }}</a>
+        <a href="/{{s}}?key={{key}}">{{ sentence_case(s) }}</a>
       {% endfor %}
     </div>
+    
+
     <div id="content">
       {% block content %}
       {% endblock %}
     </div>
     <div id="footer">
+      <div class="topnav">
+        {% if login != -1 %}
+          <a class="active">{{login}}</a>
+        {% else %}
+          <a class="active" href="/login?key={{key}}">Login</a>
+        {% endif %}
+        <a href="/admin">Admin</a>
+      </div>
       {% block footer %}
       &copy; ASInt Project 2019/20</a>.
       {% endblock %}

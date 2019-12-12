@@ -60,7 +60,7 @@ def API_microServices(url, microS):
 # ERROR resource not found page
 @app.errorhandler(404)
 def page_not_found(e):
-	return render_template('serviceOfflineTemplate.html', type="found")
+	return render_template('serviceOfflineTemplate.html', type="found", services = microservices, login = user, key = key)
 
 
 @app.route('/favicon.ico')
@@ -68,22 +68,36 @@ def favicon():
 	return redirect(url_for('static', filename='favicon.ico'), code=302)
 
 ############ HTML #############
-@app.route('/')
+@app.route('/', methods=['GET'])
 def homePage():
-	return render_template("index.html", services = microservices)
+	if request.method == "GET":
+		key = request.args.get("key")
+		# User is login, perform actions accordingly to it
+		if key in users:
+			return render_template("index.html", services = microservices, login = users[key]['user'], key = key)
+		else:
+			return render_template("index.html", services = microservices, login = -1)
+	return render_template("index.html", services = microservices, login = -1)
 
 ### Microservices
 
 @app.route('/<path:subpath>')
 def html(subpath):
+	if request.method == "GET":
+		key = request.args.get("key")
+		# User is login, perform actions accordingly to it
+		if key in users:
+			user = users[key]['user']
+		else:
+			user = -1
 	microS = subpath.split('/')[0]
 	template = microS + "Template.html"
 	response = API(subpath)
 	json = response[microS]
 	if json == None:
-		return render_template("serviceOfflineTemplate.html", service=microS, type="available")
+		return render_template("serviceOfflineTemplate.html", service=microS, type="available", services = microservices, login = user, key = key)
 	else:
-		return render_template(template, microservice=microS, json=json, services = microservices)
+		return render_template(template, microservice=microS, json=json, services = microservices, login = user, key = key)
 
 ### ADMIN
 @app.route('/admin')
@@ -129,10 +143,9 @@ def login():
 		# the app redirecte the user to the FENIX login page
 		return redirect(redPage)
 	else:
-
 		if str(key) in users:
 			print("user authenticated")
-			return redirect('/?key=' + key)
+			return redirect('/?key=' + str(key))
 		else:
 			return redirect('/login')
 
