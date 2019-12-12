@@ -72,6 +72,19 @@ def favicon():
 def homePage():
 	return render_template("index.html", services = microservices)
 
+### Microservices
+
+@app.route('/<path:subpath>')
+def html(subpath):
+	microS = subpath.split('/')[0]
+	template = microS + "Template.html"
+	response = API(subpath)
+	json = response[microS]
+	if json == None:
+		return render_template("serviceOfflineTemplate.html", service=microS, type="available")
+	else:
+		return render_template(template, microservice=microS, json=json, services = microservices)
+
 ### ADMIN
 @app.route('/admin')
 def admin():
@@ -85,8 +98,11 @@ def adminLogin():
 
 		# User is authenticated
 		if(admin_user == admin_data['user'] and admin_pass == admin_data['password']):
+			response = API("secretariat")
+			secretariats = response["secretariat"]
+			print(secretariats)
 			# Mostrar pagina de administração
-			return render_template("adminTemplate.html")
+			return render_template("adminTemplate.html", services = microservices, secretariats = secretariats)
 		
 
 	return render_template("adminTemplateLogin.html", error = True)
@@ -159,19 +175,6 @@ def userAuthenticated():
 	return redirect('/login')
 
 #######
-
-### Microservices
-
-@app.route('/<path:subpath>')
-def html(subpath):
-	microS = subpath.split('/')[0]
-	template = microS + "Template.html"
-	response = API(subpath)
-	json = response[microS]
-	if json == None:
-		return render_template("serviceOfflineTemplate.html", service=microS, type="available")
-	else:
-		return render_template(template, microservice=microS, json=json, services = microservices)
 
 # ########## REST API ###########
 

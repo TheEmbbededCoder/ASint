@@ -1,0 +1,109 @@
+{% extends "layout.html" %}
+{% block title %}Admnistration Page{% endblock %}
+{% block head %}
+	{{ super() }}
+	<style>
+	input[type=text], select {
+	  width: 100%;
+	  padding: 12px 20px;
+	  margin: 8px 0;
+	  display: inline-block;
+	  border: 1px solid #ccc;
+	  border-radius: 4px;
+	  box-sizing: border-box;
+	}
+
+	input[type=submit] {
+	  width: 100%;
+	  background-color: #4CAF50;
+	  color: white;
+	  padding: 14px 20px;
+	  margin: 8px 0;
+	  border: none;
+	  border-radius: 4px;
+	  cursor: pointer;
+	}
+
+	input[type=submit]:hover {
+	  background-color: #45a049;
+	}
+	textarea {
+	  width: 100%;
+	  height: 100px;
+	  padding: 12px 20px;
+	  box-sizing: border-box;
+	  border: 1px solid #ccc;
+	  border-radius: 4px;
+	  background-color: #f8f8f8;
+	  font-size: 13px;
+	  resize: none;
+	}
+	
+
+	#secretariats {
+	  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+	  border-collapse: collapse;
+	  width: 100%;
+	}
+
+	#secretariats td, #secretariats th {
+	  border: 1px solid #ddd;
+	  padding: 8px;
+	}
+
+	#secretariats tr:nth-child(even){background-color: #f2f2f2;}
+
+	#secretariats tr:hover {background-color: #ddd;}
+
+	#secretariats th {
+	  padding-top: 12px;
+	  padding-bottom: 12px;
+	  text-align: left;
+	  background-color: #4CAF50;
+	  color: white;
+	}
+	</style>
+{% endblock %}
+{% block content %}
+  <h1>Admnistration Page</h1>
+  	<div id="form">
+  		<h3>Available Secretariat</h3>
+	  	<table id="secretariats">
+	  	<tr>
+			<th>Name</th>
+			<th>Location</th>
+			<th>Open Hours</th>
+			<th>Description</th>
+		</tr>
+		{% if secretariats is iterable and secretariats is not string and secretariats is not mapping %}
+			{% for s in secretariats %}
+				<tr>
+				    <td>{{ s["Name"] }}</td>
+				    <td>{{ s["Location"] }}</td>
+				    <td>{{ s["OpeningHours"] }}</td>
+				    <td>{{ s["Description"] }}</td>
+				</tr>
+			{% endfor %}
+		{% endif %}
+		</table>
+	</div>
+	<div id="form">
+  		<h3>New Secretariat</h3>
+		<form action="/action_page.php">
+			<label for="name">Name</label>
+			<input type="text" id="name" name="secretariatName" placeholder="Secretariat Name">
+
+			<label for="location">Location</label>
+			<input type="text" id="location" name="secretariatLocation" placeholder="Secretariat Location">
+
+			<label for="name">Working Hours</label>
+			<input type="text" id="name" name="secretariatHours" placeholder="Secretariat Opening and Closing Hours">
+
+			<label for="location">Description</label>
+			<p> </p>
+			<textarea id="confirmationText" class="text" cols="40" rows ="5" id="description" name="secretariatDescription" placeholder="Secretariat Description"></textarea>
+			<input type="submit" value="Submit">
+		</form>
+	</div>
+
+{% endblock %}
