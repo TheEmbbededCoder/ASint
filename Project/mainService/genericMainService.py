@@ -70,12 +70,12 @@ def favicon():
 ############ HTML #############
 @app.route('/')
 def homePage():
-	return render_template("mainPage.html", services = microservices)
+	return render_template("index.html", services = microservices)
 
 ### ADMIN
 @app.route('/admin')
 def admin():
-	return render_template("adminTemplateLogin.html", error = False)
+	return render_template("adminTemplateLogin.html", services = microservices, error = False)
 
 @app.route('/adminLogin', methods=['POST'])
 def adminLogin():
@@ -169,9 +169,9 @@ def html(subpath):
 	response = API(subpath)
 	json = response[microS]
 	if json == None:
-		return render_template("serviceOfflineTemplate.html", service="Secretariat", type="found")
+		return render_template("serviceOfflineTemplate.html", service=microS, type="available")
 	else:
-		return render_template(template, microservice=microS, json=json)
+		return render_template(template, microservice=microS, json=json, services = microservices)
 
 # ########## REST API ###########
 

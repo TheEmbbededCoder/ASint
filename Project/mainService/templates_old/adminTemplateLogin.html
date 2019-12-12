@@ -1,8 +1,9 @@
-{% extends "layout.html" %}
-{% block title %}Admin Login{% endblock %}
-{% block head %}
-  {{ super() }}
-  <style>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Login</title>
+    <style>
     /* Bordered form */
 	form {
 	  border: 3px solid #f1f1f1;
@@ -81,8 +82,8 @@
 	  }
 	}
 	</style>
-{% endblock %}
-{% block content %}
+</head>
+<body>
     <h1>Admin Login</h1>
 	<form action="/adminLogin" method="post">
 	  <div class="container">
@@ -100,4 +101,6 @@
 	    {% endif %}
 	  </div>
 	</form>
-{% endblock %}
+
+</body>
+</html>
