@@ -118,9 +118,14 @@ def API_getOpenhours(name):
 		}
 	return jsonify(message)
 
-@app.route('/secretariat/add/<Location>/<Name>/<Description>/<OpeningHours>')
-def API_add(Location, Name, Description, OpeningHours):
-	print("Add")
+@app.route('/secretariat/add', methods=['POST'])
+def API_add():
+	if request.method == "POST":
+		Name = request.form["name"]
+		Location = request.form["location"]
+		Description = request.form["description"]
+		OpeningHours = request.form["hours"]
+		
 	db.addSecretariat(Location, Name, Description, OpeningHours)
 	secr = db.showSecretariat(Name)
 	if secr == None:

@@ -102,25 +102,53 @@ def html(subpath):
 ### ADMIN
 @app.route('/admin')
 def admin():
-	return render_template("adminTemplateLogin.html", services = microservices, error = False)
+	return render_template("adminTemplateLogin.html", services = microservices, error = False, login = -1)
 
 @app.route('/adminLogin', methods=['POST'])
 def adminLogin():
 	if request.method == "POST":
-		admin_user = request.form["uname"]
-		admin_pass = request.form["psw"]
+		if "uname" in request.form and "psw" in request.form:
+			admin_user = request.form["uname"]
+			admin_pass = request.form["psw"]
 
-		# User is authenticated
-		if(admin_user == admin_data['user'] and admin_pass == admin_data['password']):
-			response = API("secretariat")
-			secretariats = response["secretariat"]
-			print(secretariats)
-			# Mostrar pagina de administração
-			return render_template("adminTemplate.html", services = microservices, secretariats = secretariats)
+			# User is authenticated
+			if(admin_user == admin_data['user'] and admin_pass == admin_data['password']):
+				if "name" in request.form:
+					Name = request.form["name"]
+					Location = request.form["location"]
+					Description = request.form["description"]
+					OpeningHours = request.form["hours"]
+					data = {'name': Name, 
+							'location': Location,
+							'description': Description,
+							'hours' : OpeningHours
+							} 
+					# sending post request and saving response as response object 
+					r = requests.post(url = microservices['secretariat'] + "secretariat/add", data = data) 
+			
+				response = API("secretariat")
+				secretariats = response["secretariat"]
+				# Mostrar pagina de administração
+				return render_template("adminTemplate.html", services = microservices, secretariats = secretariats, admin_user = admin_user, admin_pass = admin_pass, login = -1, admin = 1)
 		
-
 	return render_template("adminTemplateLogin.html", error = True)
 
+@app.route('/EditSecretariat', methods=['POST'])
+def EditSecretariat():
+	if request.method == "POST":
+		if "uname" in request.form and "psw" in request.form and "name" in request.form:
+			admin_user = request.form["uname"]
+			admin_pass = request.form["psw"]
+			Name = request.form["name"]
+
+			# User is authenticated
+			if(admin_user == admin_data['user'] and admin_pass == admin_data['password']):
+				response = API("secretariat/" + Name)
+				secretariats = response["secretariat"]
+
+				# Mostrar pagina de administração
+				return render_template("adminEditTemplate.html", name=Name, services = microservices, secretariats = secretariats, admin_user = admin_user, admin_pass = admin_pass)
+		
 ###########
 
 ### Login User
