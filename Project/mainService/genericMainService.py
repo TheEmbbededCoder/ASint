@@ -2,6 +2,7 @@ from flask import Flask
 from flask import render_template
 from flask import request, url_for, redirect
 from flask import jsonify
+from flask_cors import CORS
 import requests
 import json
 
@@ -25,7 +26,7 @@ microservices = {
 }
 
 app = Flask(__name__)
-
+CORS(app)
 def API_microServices(url, microS):
 	try:
 		resp = requests.get(url)
