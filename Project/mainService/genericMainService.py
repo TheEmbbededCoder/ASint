@@ -2,6 +2,7 @@ from flask import Flask
 from flask import render_template
 from flask import request, url_for, redirect
 from flask import jsonify
+from flask_caching import Cache
 from flask_cors import CORS
 import requests
 import json
@@ -25,8 +26,17 @@ microservices = {
 	'secretariat' : "http://127.0.0.1:41000/"
 }
 
+config = {
+    "DEBUG": True,          # some Flask specific configs
+    "CACHE_TYPE": "simple", # Flask-Caching related configs
+    "CACHE_DEFAULT_TIMEOUT": 300
+}
 app = Flask(__name__)
 CORS(app)
+# tell Flask to use the above defined config
+app.config.from_mapping(config)
+cache = Cache(app)
+
 def API_microServices(url, microS):
 	try:
 		resp = requests.get(url)
@@ -83,6 +93,7 @@ def homePage():
 ### Microservices
 
 @app.route('/<path:subpath>')
+@cache.cached(timeout=50)
 def html(subpath):
 	if request.method == "GET":
 		key = request.args.get("key")
@@ -116,17 +127,44 @@ def adminLogin():
 			if(admin_user == admin_data['user'] and admin_pass == admin_data['password']):
 				if "name" in request.form:
 					Name = request.form["name"]
-					Location = request.form["location"]
-					Description = request.form["description"]
-					OpeningHours = request.form["hours"]
-					data = {'name': Name, 
-							'location': Location,
-							'description': Description,
-							'hours' : OpeningHours
-							} 
-					# sending post request and saving response as response object 
-					r = requests.post(url = microservices['secretariat'] + "secretariat/add", data = data) 
-			
+					if int(request.form["delete"]) == 0:
+						Location = request.form["location"]
+						Description = request.form["description"]
+						OpeningHours = request.form["hours"]
+						data = {
+								'name': Name, 
+								'location': Location,
+								'description': Description,
+								'hours' : OpeningHours
+								} 
+
+					req = None
+					try:
+						if int(request.form["edit"]) == 0 and int(request.form["delete"]) == 0:
+							# sending post request and saving response as response object 
+							req = requests.post(url = microservices['secretariat'] + "secretariat/add/" + Name, data = data) 
+						elif int(request.form["delete"]) == 1:
+							data = {
+								'name': Name, 
+								'delete': 1
+								} 
+							# sending put request and saving response as response object 
+							req = requests.put(url = microservices['secretariat'] + "secretariat/add/" + Name, data=data)
+						else:
+							data['delete'] = 0
+							# sending put request and saving response as response object 
+							req = requests.put(url = microservices['secretariat'] + "secretariat/add/" + Name, data=data)
+						
+						if req.status_code != 200:
+							print(req.text)
+							raise Exception('Recieved non 200 response while sending response to CFN.')
+							return
+					except requests.exceptions.RequestException as e:
+						if req != None:
+							print(req.text)
+						print(e)
+						raise 
+
 				response = API("secretariat")
 				secretariats = response["secretariat"]
 				# Mostrar pagina de administração
@@ -141,7 +179,6 @@ def EditSecretariat():
 			admin_user = request.form["uname"]
 			admin_pass = request.form["psw"]
 			Name = request.form["name"]
-
 			# User is authenticated
 			if(admin_user == admin_data['user'] and admin_pass == admin_data['password']):
 				response = API("secretariat/" + Name)

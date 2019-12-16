@@ -17,6 +17,12 @@ class secretariatsDB:
 		pickle.dump(self.sDB, f)
 		f.close()
 	
+	def delSecretariat(self, Name):
+		del self.sDB[Name]
+		f = open('secretariatsDB'+self.name, 'wb')
+		pickle.dump(self.sDB, f)
+		f.close()
+
 	def listAllSecretariats(self):
 		return list(self.sDB.values())
 	

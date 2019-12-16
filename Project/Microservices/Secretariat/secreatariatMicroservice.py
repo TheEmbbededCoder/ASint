@@ -118,13 +118,36 @@ def API_getOpenhours(name):
 		}
 	return jsonify(message)
 
-@app.route('/secretariat/add', methods=['POST'])
-def API_add():
+@app.route('/secretariat/add/<name>', methods=['POST', 'PUT'])
+def API_add(name):
 	if request.method == "POST":
 		Name = request.form["name"]
 		Location = request.form["location"]
 		Description = request.form["description"]
 		OpeningHours = request.form["hours"]
+
+	elif request.method == "PUT":
+		if db.showSecretariat(name) != None:
+			if int(request.values['delete']) == 0:
+				Name = name
+				Location = request.get_json()["location"]
+				Description = request.get_json()["description"]
+				OpeningHours = request.get_json()["hours"]
+			else:
+				db.delSecretariat(name)
+				message = {
+						'status_code': 200,
+						'message': 'secretariat deleted',
+						'secretariat': None
+					}
+				return jsonify(message)
+		else:
+			message = {
+						'status_code': 404,
+						'message': 'No secretariat found',
+						'secretariat': None
+					}
+			return jsonify(message)
 		
 	db.addSecretariat(Location, Name, Description, OpeningHours)
 	secr = db.showSecretariat(Name)
@@ -141,12 +164,21 @@ def API_add():
 			'Description' : secr.Description,
 			'OpeningHours' : secr.OpeningHours
 		}
-		message = {
-			'status_code': 200,
-			'message': 'secretariat added',
-			'secretariat': secretariat
-			}
+		if request.method == "POST":
+			message = {
+				'status_code': 200,
+				'message': 'secretariat added',
+				'secretariat': secretariat
+				}
+		elif request.method == "PUT":
+			message = {
+				'status_code': 200,
+				'message': 'secretariat eddited',
+				'secretariat': secretariat
+				}
+
 	return jsonify(message)
+
 
 if __name__ == '__main__':
 	app.run(debug=True, port=41000)
