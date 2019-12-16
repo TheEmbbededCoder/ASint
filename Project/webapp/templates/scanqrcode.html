@@ -16,7 +16,6 @@
             }
         );
         scanner.addListener('scan', function(content) {
-            //window.open(content, "_blank");
             var arrayLink = content.split('/');
             var i;
             content = arrayLink[0];
@@ -36,9 +35,10 @@
                 
                 var arr = content.split('/');
                 console.log(arr);
+                $("#infoDisp").empty();
                 if(arr[arr.length-1]=="secretariat"){
                     var i = 1;
-                    $("#infoDisp").empty();
+                    
                     $.each( data.secretariat, function( key, val ) { 
                         var items = [];
                         items.push("<h3>Secretariat " + i.toString()+"</h3>");
@@ -52,6 +52,8 @@
                             html: items.join( "" )
                         }).appendTo( "#infoDisp" );
                     }); 
+                } else if(arr[arr.length-2]=="rooms"){
+                    //parse cenas
                 }
                 
                 
