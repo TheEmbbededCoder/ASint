@@ -106,7 +106,6 @@ def html(subpath):
 	template = microS + "Template.html"
 	response = API(subpath)
 	json = response[microS]
-	print(json)
 	if json == None:
 		return render_template("serviceOfflineTemplate.html", service=microS, type="available", services = microservices, login = user, key = key)
 	else:

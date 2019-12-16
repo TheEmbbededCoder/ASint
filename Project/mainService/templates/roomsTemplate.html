@@ -124,7 +124,7 @@
 			<tr>
 			{% for s in json %}
 				{% if s != "schedule" %}
-					{% if json[s] is iterable and json[s] is string   %}
+					{% if json[s] is iterable and json[s] is string or json[s]|int != 0 %}
 						<td>{{ json[s] }}</td>
 					{% endif %}
 					{% if json[s] is iterable and json[s] is not string and json[s] is not mapping %}	
@@ -142,18 +142,26 @@
 		{% endif %}
 		</table>
 
-		{% if json['schedule'] is iterable and json['schedule'] is not mapping %}
+		{% if 'schedule'in json %}
 			<br>
 			<h2>Schedule</h2>
 			<table id="rooms">
 				<tr>
-					<th>Start</th>
-					<th>End</th>
+					{% for c in json['schedule'][0] %}
+						{% if c != 'period' %}
+							<th>{{ sentence_case(c) }}</th>
+						{% endif %}
+					{% endfor %}
+					<th>Period</th>
 				</tr>
 				{% for class in json['schedule'] %}
 					<tr>
-						<td>{{ class['start'].split()[1] }}</td>
-						<td>{{ class['end'].split()[1] }}</td>
+						{% for c in class %}
+							{% if c != 'period' %}
+								<td>{{ class[c] }}</td>
+							{% endif %}
+						{% endfor %}
+						<td>{{ class['period']['start'].split()[1] }} - {{ class['period']['end'].split()[1] }}</td>
 					</tr>
 				{% endfor %}
 			</table>
@@ -161,30 +169,6 @@
 
 	{% endif %}
 
-		<!-- <tr>
-		    <th>Room</th>
-		    <th>Campus</th>
-		</tr>
-		<tr>
-		{% for s in json %}
-			{% if json[s] is iterable and json[s] is string   %}
-				<td>{{ json[s] }}</td>
-			{% endif %}
-
-			{% if json[s] is iterable and json[s] is not string and json[s] is not mapping %}
-				<ul>
-					{% for ss in json[s] %}
-						<li>Class</li>
-						<ul>
-							{% for sss in ss %}
-								<li>{{sss}}: {{ ss[sss] }}</li>
-							{% endfor %}
-						</ul>
-					{% endfor %}
-				</ul>
-			{% endif %}
-		{% endfor %}
-		</tr> -->
 	{% if json is string %}
 		<ul>
 		<li>{{ json }}</li>

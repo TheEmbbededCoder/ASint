@@ -56,12 +56,12 @@ def room_location(id):
 			}
 		else:
 			pass_times = resp.json()
-			jprint(pass_times['name'])
-			jprint(pass_times['topLevelSpace']['name'])
 			
 			room_local = {
-				'campi'      : pass_times['topLevelSpace']['name'],
-				'building'   : pass_times['name']
+				'ID'   : pass_times['id'],
+				'Room'   : pass_times['name'],
+				'Campus'      : pass_times['topLevelSpace']['name'],
+				'Capacity'   : pass_times['capacity']['normal']
 			}
 			message = {
 				'status_code': 200,
@@ -82,7 +82,6 @@ def rooms_timetable(id, day, mouth, year):
 	message = {}
 	try:
 		resp = requests.get("https://fenix.tecnico.ulisboa.pt/api/fenix/v1/spaces/"+str(id)+"?day="+str(day)+"/"+str(mouth)+"/"+str(year))
-
 		if resp.status_code != 200:
 			#This means something went wrong.
 			message = {
@@ -91,18 +90,27 @@ def rooms_timetable(id, day, mouth, year):
 				'rooms': None
 			}
 		else:
+			pass_times = resp.json()
 			# All events of that week
-			pass_times = resp.json()['events']
-
+			events = resp.json()['events']
 			# Filtering by day required
 			schedule = []
-			for d in pass_times:
+			for d in events:
 				if d['day'] == str(day)+"/"+str(mouth)+"/"+str(year):
-					schedule.append(d['period'])
+					slot = {
+							'Course' : d['course']['name'],
+							'acronym' : d['course']['acronym'],
+							'period' : d['period'],
+							'info' : d['info'],
+							'type' : d['type']
+						}
+					schedule.append(slot)
 
 			room_timetable = {
-				'id'      : id,
+				'ID'      : pass_times['id'],
+				'Room'    : pass_times['name'],
 				'type'    : resp.json()['type'],
+				'day'     : str(day),
 				'mouth'   : str(mouth),
 				'year'    : str(year),
 				'schedule': schedule
