@@ -12,55 +12,84 @@ app = Flask(__name__)
 
 @app.route('/canteen')
 def API_showAll():
-	# Show all canteens
-	resp = requests.get('https://fenix.tecnico.ulisboa.pt/api/fenix/v1/canteen')
-	canteen = resp.json()
-	if canteen == None:
+	try:
+		# Show all canteens
+		resp = requests.get('https://fenix.tecnico.ulisboa.pt/api/fenix/v1/canteen')
+		if resp.status_code != 200:
+		    # This means something went wrong.
+		    message = {
+					'status_code': 404,
+					'message': 'Canteen Fenix API is down',
+					'canteen': None
+				}
+		else:
+			canteen = resp.json()
+			# Order the canteen menu by days
+			ordered_canteen = sorted(canteen, key = lambda i: i['day']) 
+			if canteen == None:
+				message = {
+						'status_code': 404,
+						'message': 'No resource found',
+						'canteen': None
+					}
+			else:
+				message = {
+						'status_code': 200,
+						'message': 'Canteen in up',
+						'canteen': ordered_canteen
+					}
+	except:
 		message = {
-		'status_code': 404,
-		'message': 'No resource found',
-		'canteen': None
-		}
-	else:
-		message = {
-		'status_code': 200,
-		'message': 'Canteen in up',
-		'canteen': canteen
-		}
+			'status_code': 404,
+			'message': 'Canteen Fenix API is down',
+			'canteen': None
+			}
 	return jsonify(message)
 
 @app.route('/canteen/<day>/<month>/<year>')
 def API_showCanteen(day, month, year):
 	date = day + '/' + month + '/' + year
-	print(date)
-	resp = requests.get('https://fenix.tecnico.ulisboa.pt/api/fenix/v1/canteen')
-	if resp.status_code != 200:
-	    # This means something went wrong.
-	    pass
-	else:
-	    print(resp)
-	
-	canteen = resp.json()
-	output = None
-	print(canteen)
-	for d in canteen:
-		print(d['day'])
-		if d['day'] == date:
-			output = d['meal']
-	if output == None:
+	try:
+		resp = requests.get('https://fenix.tecnico.ulisboa.pt/api/fenix/v1/canteen')
+		if resp.status_code != 200:
+		    # This means something went wrong.
+		    message = {
+			'status_code': 404,
+			'message': 'Canteen Fenix API is down',
+			'canteen': None
+			}
+		else:
+			canteen = resp.json()
+			if canteen == None:
+				message = {
+				'status_code': 404,
+				'message': 'No resource found',
+				'canteen': None
+				}
+			else:
+				output = []
+				for d in canteen:
+					if d['day'] == date:
+						output.append(d)
+				if output == None:
+					message = {
+					'status_code': 404,
+					'message': 'No menu for the selected day found',
+					'canteen': None
+					}
+				else:
+					message = {
+					'status_code': 200,
+					'message': 'OK',
+					'canteen': output
+					}
+	except:
 		message = {
-		'status_code': 404,
-		'message': 'No resource found',
-		'canteen': None
-		}
-	else:
-		message = {
-		'status_code': 200,
-		'message': 'OK',
-		'canteen': output
-		}
-	print(message)
-	return message
+			'status_code': 404,
+			'message': 'Canteen Fenix API is down',
+			'canteen': None
+			}
+	return jsonify(message)
 	
 
 

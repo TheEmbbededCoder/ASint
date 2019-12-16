@@ -3,26 +3,172 @@
 {% block head %}
   {{ super() }}
   <meta charset="UTF-8">
+  <style>
+	input[type=text], select {
+	  width: 100%;
+	  padding: 12px 20px;
+	  margin: 8px 0;
+	  display: inline-block;
+	  border: 1px solid #ccc;
+	  border-radius: 4px;
+	  box-sizing: border-box;
+	}
+
+	input[type=submit] {
+	  width: 100%;
+	  background-color: #4CAF50;
+	  color: white;
+	  padding: 14px 20px;
+	  margin: 8px 0;
+	  border: none;
+	  border-radius: 4px;
+	  cursor: pointer;
+	}
+
+	input[type=submit]:hover {
+	  background-color: #45a049;
+	}
+	textarea {
+	  width: 100%;
+	  height: 100px;
+	  padding: 12px 20px;
+	  box-sizing: border-box;
+	  border: 1px solid #ccc;
+	  border-radius: 4px;
+	  background-color: #f8f8f8;
+	  font-size: 13px;
+	  resize: none;
+	}
+	
+	.button {
+	  background-color: #4CAF50;
+	  border: none;
+	  color: white;
+	  padding: 5px 10px;
+	  text-align: center;
+	  text-decoration: none;
+	  display: inline-block;
+	  font-size: 14px;
+	  margin: 2px 2px;
+	  cursor: pointer;
+	}
+
+	.delbutton {
+	  background-color: #FF0000;
+	  border: none;
+	  color: white;
+	  padding: 5px 10px;
+	  text-align: center;
+	  text-decoration: none;
+	  display: inline-block;
+	  font-size: 14px;
+	  margin: 2px 2px;
+	  cursor: pointer;
+	}
+	#rooms {
+	  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+	  border-collapse: collapse;
+	  width: 100%;
+	}
+
+	#rooms td, #rooms th {
+	  border: 1px solid #ddd;
+	  padding: 8px;
+	}
+
+	#rooms tr:nth-child(even){background-color: #f2f2f2;}
+
+	#rooms tr:hover {background-color: #ddd;}
+
+	#rooms th {
+	  padding-top: 12px;
+	  padding-bottom: 12px;
+	  text-align: left;
+	  background-color: #4CAF50;
+	  color: white;
+	}
+	</style>
 {% endblock %}
 {% block content %}
+	{% macro sentence_case(text) %}
+        {{ text[0]|upper}}{{text[1:] }}
+    {% endmacro %}
 	<h1>Rooms</h1>
+	<table id="rooms">
 	{% if json is iterable and json is not string and json is not mapping %}
+		<tr>
+		{% for ss in json[0] %}
+		    <th>{{ sentence_case(ss) }}</th>
+		{% endfor %}
+		</tr>
 		{% for s in json %}
-			<ul>
+			<tr>
 			{% for ss in s %}
-			    <li>{{ss}}: {{ s[ss] }}</li>
+			    <td>{{ s[ss] }}</td>
 			{% endfor %}
-			</ul>
+			</tr>
 		{% endfor %}
 	{% endif %}
 
 	{% if json is iterable and json is not string and json is mapping %}
-		<ul>
+
+		<h2>Information</h2>
+		{% if json[s] is iterable and json[s] is not string and json[s] is not mapping %}
+			<tr>
+			{% for s in json %}
+				{% if s != "schedule" %}
+					<th>{{sentence_case(s)}}</th>
+				{% endif %}
+			{% endfor %}
+			</tr>
+			<tr>
+			{% for s in json %}
+				{% if s != "schedule" %}
+					{% if json[s] is iterable and json[s] is string   %}
+						<td>{{ json[s] }}</td>
+					{% endif %}
+					{% if json[s] is iterable and json[s] is not string and json[s] is not mapping %}	
+						<td>
+							<tr>
+								{% for classes in json[s] %}
+									<td>{{classes}}: {{ json[s][classes] }}</td>
+								{% endfor %}
+							</tr>
+						</td>
+					{% endif %}
+				{% endif %}
+			{% endfor %}
+			</tr>
+		{% endif %}
+		</table>
+
+		{% if json['schedule'] is iterable and json['schedule'] is not mapping %}
+			<br>
+			<h2>Schedule</h2>
+			<table id="rooms">
+				<tr>
+					<th>Start</th>
+					<th>End</th>
+				</tr>
+				{% for class in json['schedule'] %}
+					<tr>
+						<td>{{ class['start'].split()[1] }}</td>
+						<td>{{ class['end'].split()[1] }}</td>
+					</tr>
+				{% endfor %}
+			</table>
+		{% endif %}
+
+	{% endif %}
+
+		<!-- <tr>
+		    <th>Room</th>
+		    <th>Campus</th>
+		</tr>
+		<tr>
 		{% for s in json %}
-
-
 			{% if json[s] is iterable and json[s] is string   %}
-				<li>{{s}}: {{ json[s] }}</li>
+				<td>{{ json[s] }}</td>
 			{% endif %}
 
 			{% if json[s] is iterable and json[s] is not string and json[s] is not mapping %}
@@ -38,9 +184,7 @@
 				</ul>
 			{% endif %}
 		{% endfor %}
-		</ul>
-	{% endif %}
-
+		</tr> -->
 	{% if json is string %}
 		<ul>
 		<li>{{ json }}</li>

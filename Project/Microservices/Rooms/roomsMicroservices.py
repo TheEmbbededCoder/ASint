@@ -14,11 +14,31 @@ def jprint(obj):
 
 @app.route('/rooms')
 def rooms():
-	message = {
-			'status_code': 200,
-			'message': 'Rooms is up',
-			'rooms': "Rooms is up"
+	message = {}
+	try:
+		resp = requests.get("https://fenix.tecnico.ulisboa.pt/api/fenix/v1/spaces")
+
+		if resp.status_code != 200:
+			#This means something went wrong.
+			message = {
+				'status_code': 404,
+				'message': 'Resource not found',
+				'rooms': None
 			}
+		else:
+			campus = resp.json()
+			message = {
+				'status_code': 200,
+				'message'    : 'OK',
+				'rooms' : campus
+			}		
+	except:
+		message = {
+			'status_code': 404,
+			'message': 'Unable to perform API resquest to Fenix',
+			'rooms': None
+		}
+	
 	return jsonify(message)
 
 @app.route('/rooms/<id>')
@@ -54,8 +74,6 @@ def room_location(id):
 			'message': 'Unable to perform API resquest to Fenix',
 			'rooms': None
 		}
-
-
 	return jsonify(message)
 
 
