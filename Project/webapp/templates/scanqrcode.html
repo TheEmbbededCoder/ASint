@@ -7,7 +7,7 @@
 </head>
   <body>
     <video id="preview"></video>
-    <div class="mypanel"></div>
+    <div id="mypanel"></div>
     <script>
         let scanner = new Instascan.Scanner(
             {
@@ -19,8 +19,29 @@
             //window.open(content, "_blank");
             $.getJSON(content, function(data) {
                 console.log(data);
-            
-                $(".mypanel").html(data);
+                
+                var arr = content.split('/');
+                console.log(arr);
+                if(arr[arr.length-1]=="canteen"){
+                    var items = [];
+                    $.each( data.canteen, function( key, val ) {
+                        items.push("<li id='" + key + "'>" +val.day)
+                        $.each( val.meal, function( key, val ) {
+                            $.each( val.info, function( key, val ) {
+                                items.push(":"+ val.menu + "</li>" );
+                            });
+                            
+                        });
+                    });
+                    
+                    $( "<ul/>", {
+                        "class": "my-new-list",
+                        html: items.join( "" )
+                    }).appendTo( "body" );
+                }
+                
+                
+                
             });
         });
         Instascan.Camera.getCameras().then(cameras => 
