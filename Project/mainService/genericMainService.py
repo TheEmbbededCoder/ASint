@@ -28,10 +28,7 @@ microservices = {
 	'secretariat' : "http://127.0.0.1:41000/"
 }
 
-advanced_features = {
-	'QR_CODE' : '/qrcode',
-	'Who are you?' : '/way'
-}
+
 
 config = {
     "DEBUG": True,          # some Flask specific configs
@@ -92,10 +89,31 @@ def homePage():
 		key = request.args.get("key")
 		# User is login, perform actions accordingly to it
 		if key in users:
-			return render_template("index.html", services = microservices, advanced_features = advanced_features, name = users[key]['name'], login = users[key]['user'], key = key, img = users[key]['photo'])
+			return render_template("index.html", services = microservices, name = users[key]['name'], login = users[key]['user'], key = key, img = users[key]['photo'])
 		else:
 			return render_template("index.html", services = microservices, login = -1)
 	return render_template("index.html", services = microservices, login = -1)
+
+@app.route('/way', methods=['GET'])
+def way():
+	if request.method == "GET":
+		key = request.args.get("key")
+		# User is login, perform actions accordingly to it
+		if key in users:
+			return render_template("index.html", services = microservices, name = users[key]['name'], login = users[key]['user'], key = key, img = users[key]['photo'])
+		else:
+			return render_template("index.html", services = microservices, login = -1)
+	return render_template("index.html", services = microservices, login = -1)
+
+@app.route('/qrcode', methods=['GET'])
+def qrcode():
+	if request.method == "GET":
+		key = request.args.get("key")
+		# User is login, perform actions accordingly to it
+		if key in users:
+			return render_template("scanqrcode.html", services = microservices, name = users[key]['name'], login = users[key]['user'], key = key, img = users[key]['photo'])
+		
+	return redirect('/login')
 
 ### Microservices
 

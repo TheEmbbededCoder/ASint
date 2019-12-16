@@ -74,9 +74,8 @@
       {% for s in services %} 
         <a href="/{{s}}?key={{key}}">{{ sentence_case(s) }}</a>
       {% endfor %}
-      {% for s in advanced_features %} 
-        <a href="/{{advanced_features[s]}}?key={{key}}">{{ sentence_case(s) }}</a>
-      {% endfor %}
+        <a href="/qrcode?key={{key}}">QR CODE</a>
+        <a href="/way?key={{key}}">Who are you?</a>
     </div>
     
 
