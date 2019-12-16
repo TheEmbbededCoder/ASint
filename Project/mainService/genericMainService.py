@@ -7,7 +7,9 @@ from flask_cors import CORS
 import requests
 import json
 import io
-import base64
+
+import random
+import string
 
 app_id = "1695915081465946" # copy value from the app registration
 app_secret = "uKZBJ293qtOU6uQW7zPV0lrPQkgJ1kuY+56qKUtCavR/7KTTeuD8N+yeuNVy3+cT7qGhhDGRfH7Et5Ha067niQ=="
@@ -16,6 +18,14 @@ fenixacesstokenpage = 'https://fenix.tecnico.ulisboa.pt/oauth/access_token'
 
 users = {}
 key = 0
+
+current_secreat = {
+	'secreat' : 0,
+	'user_0' : -1,
+	'user_1' : -1,
+	'used' : 0
+}
+
 
 admin_data = {
 				'user' : "admin",
@@ -31,9 +41,9 @@ microservices = {
 
 
 config = {
-    "DEBUG": True,          # some Flask specific configs
-    "CACHE_TYPE": "simple", # Flask-Caching related configs
-    "CACHE_DEFAULT_TIMEOUT": 300
+	"DEBUG": True,          # some Flask specific configs
+	"CACHE_TYPE": "simple", # Flask-Caching related configs
+	"CACHE_DEFAULT_TIMEOUT": 300
 }
 app = Flask(__name__)
 CORS(app)
@@ -94,13 +104,40 @@ def homePage():
 			return render_template("index.html", services = microservices, login = -1)
 	return render_template("index.html", services = microservices, login = -1)
 
-@app.route('/way', methods=['GET'])
+@app.route('/way', methods=['GET', 'POST'])
 def way():
+	global current_secreat
 	if request.method == "GET":
 		key = request.args.get("key")
+		generate = request.args.get("generate")
 		# User is login, perform actions accordingly to it
 		if key in users:
-			return render_template("index.html", services = microservices, name = users[key]['name'], login = users[key]['user'], key = key, img = users[key]['photo'])
+			if generate != None and int(generate) == 1:
+				letters = string.ascii_lowercase
+				current_secreat['secreat'] = ''.join(random.choice(letters) for i in range(6))
+				current_secreat['user0'] = key
+				current_secreat['used'] = 0
+				print("key changed: ", current_secreat['secreat'])
+				return render_template("validationTemplate.html", services = microservices, login = users[key]['user'], key = key, secreat = current_secreat['secreat'])
+			else:
+				if(current_secreat['used'] == 1):
+					return render_template("validationTemplate.html", services = microservices, login = users[key]['user'], key = key, other_user = users[current_secreat['user1']])
+				else:
+					return render_template("validationTemplate.html", services = microservices, login = users[key]['user'], key = key)
+		else:
+			return render_template("index.html", services = microservices, login = -1)
+
+	if request.method == "POST":
+		key = request.form["key"]
+		# User is login, perform actions accordingly to it
+		if key in users:
+			if request.form["secreat"] == current_secreat['secreat']:
+				current_secreat['used'] = 1
+				current_secreat['user1'] = key
+				return render_template("validationTemplate.html", services = microservices, login = users[key]['user'], key = key, other_user = users[current_secreat['user0']])
+			else:
+				return render_template("validationTemplate.html", services = microservices, login = users[key]['user'], key = key, not_found = "Incorrect Code!")
+
 		else:
 			return render_template("index.html", services = microservices, login = -1)
 	return render_template("index.html", services = microservices, login = -1)

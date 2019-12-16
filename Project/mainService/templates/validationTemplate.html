@@ -1,0 +1,111 @@
+{% extends "layout.html" %}
+{% block title %}Who are you?{% endblock %}
+{% block head %}
+  {{ super() }}
+  <style type="text/css">
+    .important { color: #336699; }
+  </style>
+  <style>
+	input[type=text], select {
+	  width: 100%;
+	  padding: 12px 20px;
+	  margin: 8px 0;
+	  display: inline-block;
+	  border: 1px solid #ccc;
+	  border-radius: 4px;
+	  box-sizing: border-box;
+	}
+
+	input[type=submit] {
+	  width: 100%;
+	  background-color: #4CAF50;
+	  color: white;
+	  padding: 14px 20px;
+	  margin: 8px 0;
+	  border: none;
+	  border-radius: 4px;
+	  cursor: pointer;
+	}
+
+	input[type=submit]:hover {
+	  background-color: #45a049;
+	}
+	textarea {
+	  width: 100%;
+	  height: 100px;
+	  padding: 12px 20px;
+	  box-sizing: border-box;
+	  border: 1px solid #ccc;
+	  border-radius: 4px;
+	  background-color: #f8f8f8;
+	  font-size: 13px;
+	  resize: none;
+	}
+	
+	.button {
+	  background-color: #4CAF50;
+	  border: none;
+	  color: white;
+	  padding: 5px 10px;
+	  text-align: center;
+	  text-decoration: none;
+	  display: inline-block;
+	  font-size: 14px;
+	  margin: 2px 2px;
+	  cursor: pointer;
+	}
+	#secretariats {
+	  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+	  border-collapse: collapse;
+	  width: 100%;
+	}
+
+	#secretariats td, #secretariats th {
+	  border: 1px solid #ddd;
+	  padding: 8px;
+	}
+
+	#secretariats tr:nth-child(even){background-color: #f2f2f2;}
+
+	#secretariats tr:hover {background-color: #ddd;}
+
+	#secretariats th {
+	  padding-top: 12px;
+	  padding-bottom: 12px;
+	  text-align: left;
+	  background-color: #4CAF50;
+	  color: white;
+	}
+	</style>
+{% endblock %}
+{% block content %}
+	<h1>Who are you?</h1>
+	<div id="form">
+		{% if secreat %}
+			<p>The random generated secreat is: <b>{{secreat}}</b><p>
+			<a href=/way?key={{key}}>
+				<button class="button">Press after the other user enters the secreat!</button>
+			</a>
+		{% else %}
+			<a href=/way?key={{key}}&generate=1>
+				<button class="button">Generate Secreat</button>
+			</a>
+		{%endif%}
+		{% if not not_found and not other_user %}
+	  		<h3>Insert Secreat</h3>
+			<form action="/way?key={{key}}" method="POST">
+				<input type="hidden" id="key" name="key" value={{key}} required>
+				<input type="text" id="secreat" name="secreat" placeholder="Insert Secreat" required>
+				<input type="submit" value="Submit">
+			</form>
+		{% else %}
+			{% if not_found %}
+				<p>The inserted key does not match current Who Are You key!<p>
+			{%endif%}
+			{% if other_user %}
+				<p>The other user name is: {{other_user['name']}}<p>
+				<img src="data:image/png;base64,{{other_user['photo']|safe}}">
+			{%endif%}
+		{%endif%}
+	</div>
+{% endblock %}
