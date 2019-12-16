@@ -6,6 +6,8 @@ from flask_caching import Cache
 from flask_cors import CORS
 import requests
 import json
+import io
+import base64
 
 app_id = "1695915081465946" # copy value from the app registration
 app_secret = "uKZBJ293qtOU6uQW7zPV0lrPQkgJ1kuY+56qKUtCavR/7KTTeuD8N+yeuNVy3+cT7qGhhDGRfH7Et5Ha067niQ=="
@@ -24,6 +26,11 @@ microservices = {
 	'canteen' : "http://127.0.0.1:42000/",
 	'rooms' : "http://127.0.0.1:40000/",
 	'secretariat' : "http://127.0.0.1:41000/"
+}
+
+advanced_features = {
+	'QR_CODE' : '/qrcode',
+	'Who are you?' : '/way'
 }
 
 config = {
@@ -85,7 +92,7 @@ def homePage():
 		key = request.args.get("key")
 		# User is login, perform actions accordingly to it
 		if key in users:
-			return render_template("index.html", services = microservices, login = users[key]['user'], key = key)
+			return render_template("index.html", services = microservices, advanced_features = advanced_features, name = users[key]['name'], login = users[key]['user'], key = key, img = users[key]['photo'])
 		else:
 			return render_template("index.html", services = microservices, login = -1)
 	return render_template("index.html", services = microservices, login = -1)
@@ -236,7 +243,9 @@ def userAuthenticated():
 			r_info = resp.json()
 			users[str(key)] = {
 								'user' : r_info['username'],
-								'token' : r_token
+								'name' : r_info['name'],
+								'token' : r_token,
+								'photo' : r_info['photo']['data']
 							 }
 		else:
 			# Not able to get user info

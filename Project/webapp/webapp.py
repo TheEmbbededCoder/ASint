@@ -5,26 +5,17 @@ from flask import request
 from flask import jsonify
 import requests
 
-#to get the following value go to:
-# FENIX -> Pessoal - Gerir Aplicações -> criar
-#https://fenixedu.org/dev/tutorials/use-fenixedu-api-in-your-application/ (Step1)
-
-redirect_uri = "http://127.0.0.1:5000/userAuth" # this is the address of the page on this app
-
-client_id= "1695915081465939" # copy value from the app registration
-clientSecret = "QfFymW2AFXpmGRiUIXTHoaYlL6D3/x9au8JQy9LlPAmR7fsM6B7g/pGTuk/G3RaD3V8qtgEFEUucdlgB1vh3aw==" # copy value from the app registration
-
-fenixLoginpage= "https://fenix.tecnico.ulisboa.pt/oauth/userdialog?client_id=%s&redirect_uri=%s"
-fenixacesstokenpage = 'https://fenix.tecnico.ulisboa.pt/oauth/access_token'
+backend_url = "http://127.0.0.1:39000"
 
 loginName = False
 userToken = None
 code = False
 app = Flask(__name__)
 
+
 @app.route('/')
 def hello_world():
-    return render_template("appPage.html")
+    return render_template("appPage.html", url_login = backend_url + "/login")
     
 @app.route('/private')
 def private_page():
