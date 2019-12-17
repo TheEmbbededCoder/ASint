@@ -2,11 +2,12 @@ from flask import Flask
 from flask import render_template
 from flask import request, url_for, redirect
 from flask import jsonify
+from flask import send_file, send_from_directory, safe_join, abort
 import requests
 import json
 import os
-import pickle
 import glob, os
+
 
 
 for file in glob.glob("*.log"):
@@ -21,15 +22,6 @@ def jprint(obj):
 
 @app.route('/add', methods=["POST"])
 def add_log():
-	print()
-	print("new")
-	print(request)
-	print("FORM DATA")
-	print("date: ", request.form.get('date'))
-	print("method: ", request.form.get('method'))
-	print("args: ", request.form.get('args'))
-	print("request: ", request.form.get('request'))
-	print("Microservice: ", request.form.get('microservice'))
 	message = {}
 	if request.method == 'POST':
 		if request.form.get('date') != "" and request.form.get('method') != "" and request.form.get('args') != "" and request.form.get('request') != "" and request.form.get('microservice') != "":
@@ -43,9 +35,11 @@ def add_log():
 				print("LOGGED")
 				print(request.form['microservice'])
 				# Write to file
-				f = open('log' + request.form['microservice'] + ".log", 'wb')
-				pickle.dump(data, f)
-				f.close()
+				with open('log' + request.form['microservice'] + ".log", 'a') as file:
+					file.write(json.dumps(data))
+					file.write("\n")
+					file.close()
+				
 
 				message = {
 					'status_code': 200,
@@ -59,24 +53,24 @@ def add_log():
 	
 	return jsonify(message)
 
-@app.route('/get/<microservice>', methods=["GET"])
+@app.route('/log/<microservice>', methods=["GET"])
 def get_log(microservice):
 	message = {}
 	try:
-		f = open('log' + microservice, 'rb')
-		log_data = pickle.load(f)
-		f.close()
-
+		print('log' + microservice + ".log")
+		with open('log' + microservice + ".log", 'r') as log_file:
+			log_data = log_file.readlines()
 		
 		log = {
 			'microservice'   : microservice,
-			'log'   : log_data
+			'log'   : str(log_data)
 		}
 		message = {
 			'status_code': 200,
 			'message'    : 'OK',
 			'log' : log
-		}		
+		}	
+		print(message)	
 	except:
 		message = {
 			'status_code': 404,
