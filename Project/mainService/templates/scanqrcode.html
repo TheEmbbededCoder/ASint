@@ -3,19 +3,41 @@
 {% block head %}
   {{ super() }}
     <style type="text/css">
-    .important { color: #336699; }
-    .button {
-      background-color: #4CAF50;
-      border: none;
-      color: white;
-      padding: 5px 10px;
-      text-align: center;
-      text-decoration: none;
-      display: inline-block;
-      font-size: 14px;
-      margin: 2px 2px;
-      cursor: pointer;
-    }
+        .important { color: #336699; }
+        .button {
+        background-color: #4CAF50;
+        border: none;
+        color: white;
+        padding: 5px 10px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 14px;
+        margin: 2px 2px;
+        cursor: pointer;
+        }
+        #infoDisp {
+        font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+        }
+
+        #infoDisp td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        }
+
+        #infoDisp tr:nth-child(even){background-color: #f2f2f2;}
+
+        #infoDisp tr:hover {background-color: #ddd;}
+
+        #infoDisp th {
+        padding-top: 12px;
+        padding-bottom: 12px;
+        text-align: center;
+        background-color: #4CAF50;
+        color: white;
+        }
     </style>
     <script type="text/javascript" src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js" ></script>
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
@@ -40,6 +62,7 @@
         scanner.addListener('scan', function(content) {
             var arrayLink = content.split('/');
             var i;
+            var service;
             content = arrayLink[0];
             for(i = 1; i < arrayLink.length; i++){
                 content = content + '/';
@@ -48,9 +71,16 @@
                     content = content + '/';
                     content = content + "API";
                 }
+                
             }
-            
+            if(arrayLink[arrayLink.length-2] == "rooms"){
+                var now = new Date(); 
+                content = content + '/' + now.getDate().toString() + '/' + (now.getMonth()+1).toString() + '/' + now.getFullYear().toString(); 
+            }
+            console.log(content);
+                        
             $.getJSON(content, function(data) {
+                
                 $("#preview").hide();
                 scanner.stop();
                 console.log(data);
@@ -74,8 +104,17 @@
                             html: items.join( "" )
                         }).appendTo( "#infoDisp" );
                     }); 
-                } else if(arr[arr.length-2]=="rooms"){
-                    //parse cenas
+                } else if(arr[arr.length-5]=="rooms"){
+                    $("#infoDisp").append("<h3>"+data.rooms.Room + " - " + data.rooms.day + "/" + data.rooms.mouth + "/" + data.rooms.year + "</h3>");
+                    $("#infoDisp").append("<table id=rooms>");
+                    $("#infoDisp").append("<tr><th>Course</th><th>Acronym</th><th>Info</th><th>Type</th><th>Period</th></tr>");
+                    var items = [];
+                    $.each(data.rooms.schedule, function(key, val){
+                        $("#infoDisp").append("<tr>");
+                        $("#infoDisp").append("<td>" + val.Course + "</td><td>" + val.acronym + "</td><td>" + val.info + "</td><td>" + val.type + "</td><td>" + val.period.start.split(" ")[1] + " - " + val.period.end.split(" ")[1] + "</td>");
+                        $("#infoDisp").append("</tr>");    
+                    });
+                    $("#infoDisp").append("</table>");
                 }
                 
                 

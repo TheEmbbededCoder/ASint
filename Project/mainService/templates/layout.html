@@ -44,12 +44,14 @@
 		padding:10px;
 	  }
 	  #body {
-		 padding:10px;
-		 padding-bottom:60px;   /* Height of the footer */
+		padding:10px;
+	  }
+	  #content {
+		padding-bottom:65px;   /* Height of the footer */
 	  }
 	  {% if admin is not defined %}
 		#footer {
-		   position:absolute;
+		   position:fixed;
 		   bottom:0;
 		   width:100%;
 		   height:60px;   /* Height of the footer */
