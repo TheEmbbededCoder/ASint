@@ -3,6 +3,8 @@ from flask import render_template
 from flask import request, url_for, redirect
 from flask import jsonify
 from flask import send_file, send_from_directory, safe_join, abort
+
+from flask_cors import CORS
 import requests
 import json
 import os
@@ -14,6 +16,8 @@ for file in glob.glob("*.log"):
 	os.remove(file)
 
 app = Flask(__name__)
+
+CORS(app)
 
 def jprint(obj):
 	# create a formatted string of the Python JSON object
@@ -32,8 +36,6 @@ def add_log():
 					'args' : request.form['args'],
 					'request' : request.form['request']
 				}
-				print("LOGGED")
-				print(request.form['microservice'])
 				# Write to file
 				with open('log' + request.form['microservice'] + ".log", 'a') as file:
 					file.write(json.dumps(data))
@@ -57,7 +59,7 @@ def add_log():
 def get_log(microservice):
 	message = {}
 	try:
-		print('log' + microservice + ".log")
+		print('Asking for: log' + microservice + ".log")
 		with open('log' + microservice + ".log", 'r') as log_file:
 			log_data = log_file.readlines()
 		
@@ -70,7 +72,6 @@ def get_log(microservice):
 			'message'    : 'OK',
 			'log' : log
 		}	
-		print(message)	
 	except:
 		message = {
 			'status_code': 404,

@@ -2,7 +2,47 @@
 {% block title %}Admnistration Page{% endblock %}
 {% block head %}
 	{{ super() }}
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+	<script>
+	$(document).ready(function(){
+		$("button").click(function() {
+			var logAPI = "http://127.0.0.1:43000/log/" + $(this).attr('micro');
+			console.log(logAPI);
+			fetch(logAPI)
+			    .then(res => res.json())
+			    .then((out) => {
+			    	if (out.status_code == 200) {
+				    	$(".boxed").text(out.log.log);
+				    }
+				    else {
+				    	$(".boxed").text("Log not Available!");
+				    }
+			}).catch(err => console.error(err));
+		});
+	});
+	</script>
+	<script type="text/javascript">
+    function unhide(divID, otherDivId) {
+    var item = document.getElementById(divID);
+    if (item) {
+            item.className=(item.className=='hidden')?'unhidden':'hidden';
+        }
+        document.getElementById(otherDivId).className = 'hidden';
+    }
+	</script>
 	<style>
+	.hidden{
+	    display:none;
+	}
+
+	.unhidden{
+	    display:block;
+	}
+
+	.boxed {
+	  border: 1px solid black ;
+	  background-color: #FFFFFF;
+	}
 	input[type=text], select {
 	  width: 100%;
 	  padding: 12px 20px;
@@ -89,7 +129,7 @@
 	</style>
 {% endblock %}
 {% block content %}
-  	<div id="form">
+  	<div id="table">
   		<h1>Admnistration Page</h1>
   		<h3>Available Secretariat</h3>
 	  	<table id="secretariats">
@@ -129,9 +169,16 @@
 			{% endfor %}
 		{% endif %}
 		</table>
+		<div id="closenew" class="unhidden">
+			<h2 style="padding-top:20px">
+			    <a href="javascript:unhide('form', 'closenew')" class="button">Add New Secreatariat</a>
+			</h2>
+		</div>
 	</div>
-	<div id="form">
-  		<h3>New Secretariat</h3>
+	<div id="form" class="hidden">
+  		<h3>New Secretariat 
+		    <a href="javascript:unhide('closenew', 'form')" class="button">Close</a>
+		</h3>
 		<form action="/adminLogin" method="POST">
 			<input type="hidden" id="uname" name="uname" value={{admin_user}} required>
 			<input type="hidden" id="psw" name="psw" value={{admin_pass}} required>
@@ -152,5 +199,25 @@
 			<input type="submit" value="Submit">
 		</form>
 	</div>
-
+	<div id="table">
+		<h3>Logs</h3>
+		{% macro sentence_case(text) %}
+			{{ text[0]|upper}}{{text[1:] }}
+		{% endmacro %}
+		<div id="logsclose" class="unhidden">
+			<h2>
+			<button class="button" micro="backend"><a href="javascript:unhide('logsopen', 'logsclose')" class="button">Backend</a></button>
+			{% for micro in services %}
+			    <button class="button" micro={{micro}}><a href="javascript:unhide('logsopen', 'logsclose')" class="button" >{{sentence_case(micro)}}</a></button>
+			{% endfor %}
+			</h2>
+		</div>
+		<div id="logsopen" class="hidden">
+			<a href="javascript:unhide('logsclose', 'logsopen')" class="button">Close</a>
+			<p> </p>
+			<div id="infoDisp" class="boxed">
+			  This text is enclosed in a box.
+			</div>
+		</div>
+	</div>
 {% endblock %}

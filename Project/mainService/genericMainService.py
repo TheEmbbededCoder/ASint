@@ -98,8 +98,6 @@ def page_not_found(e):
 def favicon():
 	return redirect(url_for('static', filename='favicon.ico'), code=302)
 
-
-
 ############ LOG #############
 @app.before_request
 def before_request_func():
@@ -148,7 +146,6 @@ def way():
 				current_secreat['secreat'] = ''.join(random.choice(letters) for i in range(6))
 				current_secreat['user0'] = key
 				current_secreat['used'] = 0
-				print("key changed: ", current_secreat['secreat'])
 				return render_template("validationTemplate.html", services = microservices, login = users[key]['user'], key = key, secreat = current_secreat['secreat'])
 			else:
 				if(current_secreat['used'] == 1):
