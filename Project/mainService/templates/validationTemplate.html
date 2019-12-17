@@ -5,7 +5,71 @@
   <style type="text/css">
     .important { color: #336699; }
   </style>
+  <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+	<script>
+	$(document).ready(function(){
+		$("button").click(function() {
+			if( $(this).attr('secreat') == 1) {
+				var secreatAPI = "http://127.0.0.1:39000/waygenerate?key=" + $(this).attr('key');
+				console.log(secreatAPI)
+				fetch(secreatAPI)
+				    .then(res => res.json())
+				    .then((out) => {
+				    	if (out.status_code == 200) {
+
+				    		$("#secreatToShow").text(out.secreat.secreat);
+				    		console.log(out.secreat.secreat)
+					    }
+					    else {
+				    		$("#secreatToShow").text("Secreat generator not available!");
+				    		console.log("Error secreat")
+					    }
+				}).catch(err => console.error(err));
+			}
+		});
+	});
+	</script>
+
+	<script>
+		function getOtherUser(key) {
+			var askfor = setInterval(function() {
+				var secreatAPI = "http://127.0.0.1:39000/wayreceive?key=" + key;
+				console.log(secreatAPI)
+				fetch(secreatAPI)
+				    .then(res => res.json())
+				    .then((out) => {
+				    	if (out.status_code == 200) {
+				    		$("#otherPerson").text("The other user is: " + out.user.user.name);
+				    		$("#otherPersonPhoto").prepend("<img src='data:image/png;base64," + out.user.user.photo + "'>");
+				    		console.log(out.user.user.name)
+
+	  						clearInterval(askfor);
+					    }
+					    else {
+				    		$("#otherPerson").text("Waiting for the other user...");
+				    		console.log("Waiting for the other user")
+					    }
+				}).catch(err => console.error(err));
+			}, 1000);
+		}
+	</script>
+  <script type="text/javascript">
+    function unhide(divID, otherDivId) {
+    var item = document.getElementById(divID);
+    if (item) {
+            item.className=(item.className=='hidden')?'unhidden':'hidden';
+        }
+        document.getElementById(otherDivId).className = 'hidden';
+    }
+	</script>
   <style>
+  	.hidden{
+	    display:none;
+	}
+
+	.unhidden{
+	    display:block;
+	}
 	input[type=text], select {
 	  width: 100%;
 	  padding: 12px 20px;
@@ -54,6 +118,9 @@
 	  margin: 2px 2px;
 	  cursor: pointer;
 	}
+	#secreatToShow {
+		font-weight: bold;
+	}
 	#secretariats {
 	  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
 	  border-collapse: collapse;
@@ -81,11 +148,31 @@
 {% block content %}
 	<h1>Who are you?</h1>
 	<div id="form">
-		{% if secreat %}
-			<p>The random generated secreat is: <b>{{secreat}}</b><p>
+		<div id="secreatClose" class="unhidden">
+			<h2>
+			<button class="button" secreat=1 key={{key}} onclick="getOtherUser({{key}});"><a href="javascript:unhide('secreatOpen', 'secreatClose')" class="button">Generate Secreat</a></button>
+			</h2>
+		</div>
+		<div id="secreatOpen" class="hidden" key={{key}}>
+			<p>The random generated secreat is: <b id="secreatToShow"></b><p>
+			<button class="button" secreat=1 key={{key}} onclick="getOtherUser({{key}});">Generate New Secreat</button>
+			</h2>
+			<div id="otherPerson"></div>
+			<div id="otherPersonPhoto"></div>
+		</div>
+		<h3>Insert Secreat</h3>
+		<form action="/way?key={{key}}" method="POST">
+			<input type="hidden" id="key" name="key" value={{key}} required>
+			<input type="text" id="secreat" name="secreat" placeholder="Insert Secreat" required>
+			<input type="submit" value="Submit">
+		</form>
+
+
+		<!-- {% if secreat %}
 			<a href=/way?key={{key}}>
 				<button class="button">Press after the other user enters the secreat!</button>
 			</a>
+			<p>The random generated secreat is: <b>{{secreat}}</b><p>
 		{% else %}
 			<a href=/way?key={{key}}&generate=1>
 				<button class="button">Generate Secreat</button>
@@ -101,7 +188,7 @@
 		{% else %}
 			{% if not_found %}
 				<p>The inserted key does not match current Who Are You key!<p>
-			{%endif%}
+			{%endif%} -->
 			{% if other_user %}
 				<p>The other user name is: {{other_user['name']}}<p>
 				<img src="data:image/png;base64,{{other_user['photo']|safe}}">

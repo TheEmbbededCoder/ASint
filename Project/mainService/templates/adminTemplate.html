@@ -7,7 +7,6 @@
 	$(document).ready(function(){
 		$("button").click(function() {
 			var logAPI = "http://127.0.0.1:43000/log/" + $(this).attr('micro');
-			console.log(logAPI);
 			fetch(logAPI)
 			    .then(res => res.json())
 			    .then((out) => {

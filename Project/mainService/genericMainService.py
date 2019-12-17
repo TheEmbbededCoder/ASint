@@ -170,6 +170,62 @@ def way():
 			return render_template("index.html", services = microservices, login = -1)
 	return render_template("index.html", services = microservices, login = -1)
 
+@app.route('/waygenerate', methods=['GET'])
+def waygenerate():
+	global current_secreat
+	data = None
+	if request.method == "GET":
+		key = request.args.get("key")
+		# User is login, perform actions accordingly to it
+		if key in users:
+			letters = string.ascii_lowercase
+			current_secreat['secreat'] = ''.join(random.choice(letters) for i in range(6))
+			current_secreat['user0'] = key
+			current_secreat['used'] = 0
+			data = {
+				'secreat' : current_secreat['secreat']
+				}
+	if data != None:
+		message = {
+			'status_code': 200,
+			'message': 'Secreat Generated',
+			'secreat': data
+		}
+	else:
+		message = {
+			'status_code': 404,
+			'message': 'Not authenticated user',
+			'secreat': None
+		}
+	return jsonify(message)
+
+@app.route('/wayreceive', methods=['GET'])
+def wayreceive():
+	global current_secreat
+	data = None
+	if request.method == "GET":
+		key = request.args.get("key")
+		# User is login, perform actions accordingly to it
+		if key in users:
+			if(current_secreat['used'] == 1):
+				data = {
+					'user' : users[current_secreat['user1']]
+					}
+				current_secreat['used'] = 0
+	if data != None:
+		message = {
+			'status_code': 200,
+			'message': 'Other User is',
+			'user': data
+		}
+	else:
+		message = {
+			'status_code': 404,
+			'message': 'Code not authenticated',
+			'user': None
+		}
+	return jsonify(message)
+
 @app.route('/qrcode', methods=['GET'])
 def qrcode():
 	if request.method == "GET":
