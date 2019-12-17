@@ -88,22 +88,18 @@
                 var arr = content.split('/');
                 console.log(arr);
                 $("#infoDisp").empty();
-                if(arr[arr.length-1]=="secretariat"){
-                    var i = 1;
+                if(arr[arr.length-2]=="secretariat"){
+                    var items = [];
+                    items.push("<h3>Secretariat " + data.secretariat.Name+"</h3>");
                     
-                    $.each( data.secretariat, function( key, val ) { 
-                        var items = [];
-                        items.push("<h3>Secretariat " + i.toString()+"</h3>");
-                        i = i+1;
-                        $.each( val, function( key, val ) {
-                            items.push("<li id='" + key + "'>" +key + ":"+ val + "</li>" );
-                            
-                        });
-                        $( "<ul/>", {
-                            "class": "secretariat-list",
-                            html: items.join( "" )
-                        }).appendTo( "#infoDisp" );
-                    }); 
+                    $.each( data.secretariat, function( key, val ) {
+                        items.push("<li id='" + key + "'>" +key + ":"+ val + "</li>" );
+                    });
+                    $( "<ul/>", {
+                        "class": "secretariat-list",
+                        html: items.join( "" )
+                    }).appendTo( "#infoDisp" );
+                   
                 } else if(arr[arr.length-5]=="rooms"){
                     $("#infoDisp").append("<h3>"+data.rooms.Room + " - " + data.rooms.day + "/" + data.rooms.mouth + "/" + data.rooms.year + "</h3>");
                     $("#infoDisp").append("<table id=rooms>");
