@@ -1,0 +1,3 @@
+2019-12-17 10:03:07,046 WARNING api:  * Debugger is active!
+2019-12-17 10:03:07,047 INFO api:  * Debugger PIN: 264-844-987
+2019-12-17 10:03:19,177 INFO api:  * Detected change in '/home/francisco/Documents/IST/ASint/Project/mainService/genericMainService.py', reloading

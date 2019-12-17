@@ -11,6 +11,8 @@ import io
 import random
 import string
 
+import datetime 
+
 app_id = "1695915081465946" # copy value from the app registration
 app_secret = "uKZBJ293qtOU6uQW7zPV0lrPQkgJ1kuY+56qKUtCavR/7KTTeuD8N+yeuNVy3+cT7qGhhDGRfH7Et5Ha067niQ=="
 fenixLoginpage= "https://fenix.tecnico.ulisboa.pt/oauth/userdialog?client_id=%s&redirect_uri=%s"
@@ -33,10 +35,12 @@ admin_data = {
 			}
 
 microservices = {
-	'canteen' : "http://127.0.0.1:42000/",
 	'rooms' : "http://127.0.0.1:40000/",
-	'secretariat' : "http://127.0.0.1:41000/"
+	'secretariat' : "http://127.0.0.1:41000/",
+	'canteen' : "http://127.0.0.1:42000/"
 }
+
+log_microservice = "http://127.0.0.1:43000/"
 
 
 
@@ -45,6 +49,8 @@ config = {
 	"CACHE_TYPE": "simple", # Flask-Caching related configs
 	"CACHE_DEFAULT_TIMEOUT": 300
 }
+
+
 app = Flask(__name__)
 CORS(app)
 # tell Flask to use the above defined config
@@ -91,6 +97,26 @@ def page_not_found(e):
 @app.route('/favicon.ico')
 def favicon():
 	return redirect(url_for('static', filename='favicon.ico'), code=302)
+
+
+
+############ LOG #############
+@app.before_request
+def before_request_func():
+	data = {
+		'date' : str(datetime.datetime.now()),
+		'method' : request.method,
+		'microservice' : 'backend',
+		'args' : request.args,
+		'request' : str(request)
+	}
+	try:
+		req = requests.post(url = log_microservice + "add", data = data) 
+		if req.status_code != 200:
+			print("Log service not available")
+	except Exception as e:
+		print("ERROR - Logging"+str(e))
+
 
 ############ HTML #############
 @app.route('/', methods=['GET'])

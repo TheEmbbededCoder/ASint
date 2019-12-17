@@ -5,10 +5,34 @@ from flask import jsonify
 import secretariatsDB
 import secretariats
 
+import datetime 
+import requests
+log_microservice = "http://127.0.0.1:43000/"
+
 app = Flask(__name__)
 db = secretariatsDB.secretariatsDB("secretariats")
 for secretariat in db.listAllSecretariats():
 	print(secretariat)
+
+
+
+############ LOG #############
+@app.before_request
+def before_request_func():
+	data = {
+		'date' : str(datetime.datetime.now()),
+		'method' : request.method,
+		'microservice' : 'secretariat',
+		'args' : request.args,
+		'request' : str(request)
+	}
+	try:
+		req = requests.post(url = log_microservice + "add", data = data) 
+		print(req.status_code)
+		if req.status_code != 200:
+			print("Log service not available")
+	except Exception as e:
+		print("ERROR - Logging"+str(e))
 
 ########## REST API ###########
 
