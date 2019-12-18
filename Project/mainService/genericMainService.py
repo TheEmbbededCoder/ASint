@@ -226,6 +226,45 @@ def wayreceive():
 		}
 	return jsonify(message)
 
+@app.route('/way/<secret>')
+def handleSecret(secret, methods=['GET']):
+	global current_secreat
+	if request.method == "GET":
+		key = request.args.get("key")
+		if key in users:
+			if secret == current_secreat['secreat']:
+				current_secreat['used'] = 1
+				current_secreat['user1'] = key
+				data = {
+					'user' : users[current_secreat['user0']]
+				}
+
+				message = {
+					'status_code': 200,
+					'message': 'Other User is',
+					'user': data
+				}
+			else:
+				message = {
+					'status_code': 404,
+					'message': 'Secret not found.',
+					'user': None
+				}
+		else:
+			message = {
+				'status_code': 404,
+				'message': 'You are not authenticated.',
+				'user': None
+			}
+	else:
+		message = {
+			'status_code': 404,
+			'message': 'You are not authenticated.',
+			'user': None
+		}		
+		
+	return jsonify(message)
+
 @app.route('/qrcode', methods=['GET'])
 def qrcode():
 	if request.method == "GET":

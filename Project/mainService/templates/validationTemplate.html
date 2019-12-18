@@ -16,7 +16,7 @@
 				    .then(res => res.json())
 				    .then((out) => {
 				    	if (out.status_code == 200) {
-
+							$('#secretP').show();
 				    		$("#secreatToShow").text(out.secreat.secreat);
 				    		console.log(out.secreat.secreat)
 					    }
@@ -40,6 +40,7 @@
 				    .then((out) => {
 				    	if (out.status_code == 200) {
 				    		$("#otherPerson").text("The other user is: " + out.user.user.name);
+							$('#otherPersonPhoto').empty();
 				    		$("#otherPersonPhoto").prepend("<img src='data:image/png;base64," + out.user.user.photo + "'>");
 				    		console.log(out.user.user.name)
 
@@ -145,6 +146,7 @@
 	}
 	</style>
 {% endblock %}
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 {% block content %}
 	<h1>Who are you?</h1>
 	<div id="form">
@@ -154,19 +156,38 @@
 			</h2>
 		</div>
 		<div id="secreatOpen" class="hidden" key={{key}}>
-			<p>The random generated secreat is: <b id="secreatToShow"></b><p>
+			<p id="secretP">The random generated secreat is: <b id="secreatToShow"></b><p>
 			<button class="button" secreat=1 key={{key}} onclick="getOtherUser({{key}});">Generate New Secreat</button>
 			</h2>
 			<div id="otherPerson"></div>
 			<div id="otherPersonPhoto"></div>
 		</div>
 		<h3>Insert Secreat</h3>
-		<form action="/way?key={{key}}" method="POST">
-			<input type="hidden" id="key" name="key" value={{key}} required>
+		<form>
 			<input type="text" id="secreat" name="secreat" placeholder="Insert Secreat" required>
-			<input type="submit" value="Submit">
+			<input type="button" value="Submit" onClick="return EvaluateForm();">
 		</form>
 
+		<script>
+		function EvaluateForm() {
+			secretLink = "http://127.0.0.1:39000/way/" + document.getElementById('secreat').value + "?key={{key}}";
+			console.log(secretLink);
+			$.getJSON(secretLink, function(data) {
+				console.log(data);
+				$('#otherPerson').text("The other user is " + data.user.user.name);
+				$('#otherPersonPhoto').empty();
+				$("#otherPersonPhoto").prepend("<img src='data:image/png;base64," + data.user.user.photo + "'>");	
+				$('#otherPersonPhoto').show();
+				$('#secretP').hide();
+				$('#secreatOpen').show();
+				$('#secreatClose').hide();
+				
+			});
+
+
+			return false;
+		}
+		</script>
 
 		<!-- {% if secreat %}
 			<a href=/way?key={{key}}>
@@ -189,10 +210,7 @@
 			{% if not_found %}
 				<p>The inserted key does not match current Who Are You key!<p>
 			{%endif%} -->
-			{% if other_user %}
-				<p>The other user name is: {{other_user['name']}}<p>
-				<img src="data:image/png;base64,{{other_user['photo']|safe}}">
-			{%endif%}
+			
 		{%endif%}
 	</div>
 {% endblock %}

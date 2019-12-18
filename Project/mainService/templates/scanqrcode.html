@@ -49,8 +49,8 @@
             <button class="button">Init Scanner</button>
         </div>
         <br>
-        <video id="preview"></video>
         <div id="infoDisp"></div>
+        <video id="preview"></video>
     </div>
 
     <script>
@@ -80,46 +80,47 @@
             console.log(content);
                         
             $.getJSON(content, function(data) {
-                
-                $("#preview").hide();
-                scanner.stop();
-                console.log(data);
-                
-                var arr = content.split('/');
-                console.log(arr);
-                $("#infoDisp").empty();
-                if(arr[arr.length-2]=="secretariat"){
-                    var items = [];
-                    items.push("<h3>Secretariat " + data.secretariat.Name+"</h3>");
+                if(data.message == "OK"){
+                    $("#preview").hide();
+                    scanner.stop();
+                    console.log(data);
+                    $("#infoDisp").empty();
+                    var arr = content.split('/');
+                    console.log(arr);
                     
-                    $.each( data.secretariat, function( key, val ) {
-                        items.push("<li id='" + key + "'>" +key + ":"+ val + "</li>" );
-                    });
-                    $( "<ul/>", {
-                        "class": "secretariat-list",
-                        html: items.join( "" )
-                    }).appendTo( "#infoDisp" );
-                   
-                } else if(arr[arr.length-5]=="rooms"){
-                    $("#infoDisp").append("<h3>"+data.rooms.Room + " - " + data.rooms.day + "/" + data.rooms.mouth + "/" + data.rooms.year + "</h3>");
-                    $("#infoDisp").append("<table id=rooms>");
-                    $("#infoDisp").append("<tr><th>Course</th><th>Acronym</th><th>Info</th><th>Type</th><th>Period</th></tr>");
-                    var items = [];
-                    $.each(data.rooms.schedule, function(key, val){
-                        $("#infoDisp").append("<tr>");
-                        $("#infoDisp").append("<td>" + val.Course + "</td><td>" + val.acronym + "</td><td>" + val.info + "</td><td>" + val.type + "</td><td>" + val.period.start.split(" ")[1] + " - " + val.period.end.split(" ")[1] + "</td>");
-                        $("#infoDisp").append("</tr>");    
-                    });
-                    $("#infoDisp").append("</table>");
-                }
-                
-                
-                
+                    if(arr[arr.length-2]=="secretariat"){
+                        var items = [];
+                        items.push("<h3>Secretariat " + data.secretariat.Name+"</h3>");
+                        
+                        $.each( data.secretariat, function( key, val ) {
+                            items.push("<li id='" + key + "'>" +key + ":"+ val + "</li>" );
+                        });
+                        $( "<ul/>", {
+                            "class": "secretariat-list",
+                            html: items.join( "" )
+                        }).appendTo( "#infoDisp" );
+                    
+                    } else if(arr[arr.length-5]=="rooms"){
+                        $("#infoDisp").append("<h3>"+data.rooms.Room + " - " + data.rooms.day + "/" + data.rooms.mouth + "/" + data.rooms.year + "</h3>");
+                        $("#infoDisp").append("<table id=rooms>");
+                        $("#infoDisp").append("<tr><th>Course</th><th>Acronym</th><th>Info</th><th>Type</th><th>Period</th></tr>");
+                        var items = [];
+                        $.each(data.rooms.schedule, function(key, val){
+                            $("#infoDisp").append("<tr>");
+                            $("#infoDisp").append("<td>" + val.Course + "</td><td>" + val.acronym + "</td><td>" + val.info + "</td><td>" + val.type + "</td><td>" + val.period.start.split(" ")[1] + " - " + val.period.end.split(" ")[1] + "</td>");
+                            $("#infoDisp").append("</tr>");    
+                        });
+                        $("#infoDisp").append("</table>");
+                    }
+                } else{
+                    $("#infoDisp").append("Service not found.");
+                } 
             });
         });
         $( "#button" ).click(function() {
             $( "#preview" ).show( "slow", function() {
                 // Animation complete.
+                $("#infoDisp").empty();
             });
             Instascan.Camera.getCameras().then(cameras => 
             {
