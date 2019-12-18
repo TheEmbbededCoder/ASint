@@ -173,15 +173,18 @@
 			secretLink = "http://127.0.0.1:39000/way/" + document.getElementById('secreat').value + "?key={{key}}";
 			console.log(secretLink);
 			$.getJSON(secretLink, function(data) {
-				console.log(data);
-				$('#otherPerson').text("The other user is " + data.user.user.name);
-				$('#otherPersonPhoto').empty();
-				$("#otherPersonPhoto").prepend("<img src='data:image/png;base64," + data.user.user.photo + "'>");	
-				$('#otherPersonPhoto').show();
-				$('#secretP').hide();
-				$('#secreatOpen').show();
-				$('#secreatClose').hide();
-				
+				if(data.status_code == 200){
+					console.log(data);
+					$('#otherPerson').text("The other user is " + data.user.user.name);
+					$('#otherPersonPhoto').empty();
+					$("#otherPersonPhoto").prepend("<img src='data:image/png;base64," + data.user.user.photo + "'>");	
+					$('#otherPersonPhoto').show();
+					$('#secretP').hide();
+					$('#secreatOpen').show();
+					$('#secreatClose').hide();
+				} else {
+					alert(data.message);
+				}
 			});
 
 
