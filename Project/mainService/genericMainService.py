@@ -21,13 +21,17 @@ fenixacesstokenpage = 'https://fenix.tecnico.ulisboa.pt/oauth/access_token'
 users = {}
 key = 0
 
+# Criar lista de secrets com base no secreat
+list_secret = {}
+
+'''
 current_secreat = {
 	'secreat' : 0,
 	'user_0' : -1,
 	'user_1' : -1,
 	'used' : 0
 }
-
+'''
 
 admin_data = {
 				'user' : "admin",
@@ -141,47 +145,32 @@ def way():
 		generate = request.args.get("generate")
 		# User is login, perform actions accordingly to it
 		if key in users:
-			if generate != None and int(generate) == 1:
-				letters = string.ascii_lowercase
-				current_secreat['secreat'] = ''.join(random.choice(letters) for i in range(6))
-				current_secreat['user0'] = key
-				current_secreat['used'] = 0
-				return render_template("validationTemplate.html", services = microservices, login = users[key]['user'], key = key, secreat = current_secreat['secreat'])
-			else:
-				if(current_secreat['used'] == 1):
-					return render_template("validationTemplate.html", services = microservices, login = users[key]['user'], key = key, other_user = users[current_secreat['user1']])
-				else:
-					return render_template("validationTemplate.html", services = microservices, login = users[key]['user'], key = key)
+			return render_template("validationTemplate.html", services = microservices, login = users[key]['user'], key = key)
 		else:
 			return render_template("index.html", services = microservices, login = -1)
 
-	if request.method == "POST":
-		key = request.form["key"]
-		# User is login, perform actions accordingly to it
-		if key in users:
-			if request.form["secreat"] == current_secreat['secreat']:
-				current_secreat['used'] = 1
-				current_secreat['user1'] = key
-				return render_template("validationTemplate.html", services = microservices, login = users[key]['user'], key = key, other_user = users[current_secreat['user0']])
-			else:
-				return render_template("validationTemplate.html", services = microservices, login = users[key]['user'], key = key, not_found = "Incorrect Code!")
-
-		else:
-			return render_template("index.html", services = microservices, login = -1)
 	return render_template("index.html", services = microservices, login = -1)
 
 @app.route('/waygenerate', methods=['GET'])
 def waygenerate():
-	global current_secreat
+		
+	global list_secret
 	data = None
 	if request.method == "GET":
 		key = request.args.get("key")
 		# User is login, perform actions accordingly to it
 		if key in users:
 			letters = string.ascii_lowercase
-			current_secreat['secreat'] = ''.join(random.choice(letters) for i in range(6))
-			current_secreat['user0'] = key
-			current_secreat['used'] = 0
+			current_secreat = {
+				'secreat' : ''.join(random.choice(letters) for i in range(6)),
+				'user0' : key,
+				'user1' : -1,
+				'used' : 0
+			}
+
+			# Fill list of secrets
+			list_secret[current_secreat['secreat']] = current_secreat
+
 			data = {
 				'secreat' : current_secreat['secreat']
 				}
@@ -199,19 +188,19 @@ def waygenerate():
 		}
 	return jsonify(message)
 
-@app.route('/wayreceive', methods=['GET'])
-def wayreceive():
-	global current_secreat
+@app.route('/wayreceive/<secret>', methods=['GET'])
+def wayreceive(secret):
+	global list_secret
 	data = None
 	if request.method == "GET":
 		key = request.args.get("key")
 		# User is login, perform actions accordingly to it
 		if key in users:
-			if(current_secreat['used'] == 1):
+			if(list_secret[secret]['used'] == 1):
 				data = {
-					'user' : users[current_secreat['user1']]
+					'user' : users[list_secret[secret]['user1']]
 					}
-				current_secreat['used'] = 0
+				list_secret.pop(secret)
 	if data != None:
 		message = {
 			'status_code': 200,
@@ -228,15 +217,17 @@ def wayreceive():
 
 @app.route('/way/<secret>')
 def handleSecret(secret, methods=['GET']):
-	global current_secreat
+	global list_secret
 	if request.method == "GET":
 		key = request.args.get("key")
 		if key in users:
-			if secret == current_secreat['secreat']:
-				current_secreat['used'] = 1
-				current_secreat['user1'] = key
+			if secret in list_secret:
+
+				list_secret[secret]['used'] = 1
+				list_secret[secret]['user1'] = key
+
 				data = {
-					'user' : users[current_secreat['user0']]
+					'user' : users[list_secret[secret]['user0']]
 				}
 
 				message = {

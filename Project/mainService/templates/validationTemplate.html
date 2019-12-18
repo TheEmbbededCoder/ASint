@@ -33,7 +33,8 @@
 	<script>
 		function getOtherUser(key) {
 			var askfor = setInterval(function() {
-				var secreatAPI = "http://127.0.0.1:39000/wayreceive?key=" + key;
+				var secreat = $("#secreatToShow").text();
+				var secreatAPI = "http://127.0.0.1:39000/wayreceive/" + secreat + "?key=" + key;
 				console.log(secreatAPI)
 				fetch(secreatAPI)
 				    .then(res => res.json())
