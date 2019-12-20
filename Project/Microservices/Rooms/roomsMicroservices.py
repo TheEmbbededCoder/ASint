@@ -4,8 +4,10 @@ from flask import request, url_for, redirect
 from flask import jsonify
 import requests
 import json
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 
 ############ LOG #############
 import datetime 

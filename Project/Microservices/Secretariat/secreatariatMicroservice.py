@@ -4,9 +4,11 @@ from flask import request, url_for, redirect
 from flask import jsonify
 import secretariatsDB
 import secretariats
+from flask_cors import CORS
 
 
 app = Flask(__name__)
+CORS(app)
 db = secretariatsDB.secretariatsDB("secretariats")
 for secretariat in db.listAllSecretariats():
 	print(secretariat)

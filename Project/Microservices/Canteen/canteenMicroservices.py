@@ -3,10 +3,12 @@ from flask import render_template
 from flask import request, url_for, redirect
 from flask import jsonify
 import json
+from flask_cors import CORS
 
 import requests
 
 app = Flask(__name__)
+CORS(app)
 
 ############ LOG #############
 import datetime 
