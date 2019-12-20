@@ -49,8 +49,10 @@
             <button class="button">Init Scanner</button>
         </div>
         <br>
-        <div id="infoDisp"></div>
         <video id="preview"></video>
+        <br>
+        <br>
+        <div id="infoDisp"></div>
     </div>
 
     <script>
@@ -60,6 +62,14 @@
             }
         );
         scanner.addListener('scan', function(content) {
+            var arrayContentQRCODE = content.split(';');
+            for(i = 1; i < arrayContentQRCODE.length; i++){
+                if (~arrayContentQRCODE[i].indexOf("URL") || ~arrayContentQRCODE[i].indexOf("http")) {
+                    content = arrayContentQRCODE[i];
+                    content = content.substring(content.indexOf("http"), content.length)
+                    content = content.replace(/\\/g, "");
+                }
+            }
             var arrayLink = content.split('/');
             var i;
             var service;
@@ -73,45 +83,18 @@
                 }
                 
             }
-            if(arrayLink[arrayLink.length-2] == "rooms"){
-                var now = new Date(); 
-                content = content + '/' + now.getDate().toString() + '/' + (now.getMonth()+1).toString() + '/' + now.getFullYear().toString(); 
-            }
+
+            
+            console.log("Processed content:");
             console.log(content);
                         
-            $.getJSON(content, function(data) {
-                if(data.message == "OK"){
-                    $("#preview").hide();
-                    scanner.stop();
-                    console.log(data);
+            $.getJSON(content, function(response, status, jqXHR) {
+                if(response.message == "OK"){
+                    //$("#preview").hide();
+                    //scanner.stop();
+                    console.log(jqXHR.responseText);
                     $("#infoDisp").empty();
-                    var arr = content.split('/');
-                    console.log(arr);
-                    
-                    if(arr[arr.length-2]=="secretariat"){
-                        var items = [];
-                        items.push("<h3>Secretariat " + data.secretariat.Name+"</h3>");
-                        
-                        $.each( data.secretariat, function( key, val ) {
-                            items.push("<li id='" + key + "'>" +key + ":"+ val + "</li>" );
-                        });
-                        $( "<ul/>", {
-                            "class": "secretariat-list",
-                            html: items.join( "" )
-                        }).appendTo( "#infoDisp" );
-                    
-                    } else if(arr[arr.length-5]=="rooms"){
-                        $("#infoDisp").append("<h3>"+data.rooms.Room + " - " + data.rooms.day + "/" + data.rooms.mouth + "/" + data.rooms.year + "</h3>");
-                        $("#infoDisp").append("<table id=rooms>");
-                        $("#infoDisp").append("<tr><th>Course</th><th>Acronym</th><th>Info</th><th>Type</th><th>Period</th></tr>");
-                        var items = [];
-                        $.each(data.rooms.schedule, function(key, val){
-                            $("#infoDisp").append("<tr>");
-                            $("#infoDisp").append("<td>" + val.Course + "</td><td>" + val.acronym + "</td><td>" + val.info + "</td><td>" + val.type + "</td><td>" + val.period.start.split(" ")[1] + " - " + val.period.end.split(" ")[1] + "</td>");
-                            $("#infoDisp").append("</tr>");    
-                        });
-                        $("#infoDisp").append("</table>");
-                    }
+                    $("#infoDisp").text(respose.responseText);
                 } else{
                     $("#infoDisp").append("Service not found.");
                 } 
